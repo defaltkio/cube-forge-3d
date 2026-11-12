@@ -267,7 +267,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-5">
                     <div class="sm:col-span-3">
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="pieceName">Nome da Peça / Cliente</label>
-                        <input type="text" id="pieceName" value="Dragão Articulado Multicolor (Kobra 4)" placeholder="Ex: Suporte Headset / Action Figure" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition">
+                        <input type="text" id="pieceName" value="" placeholder="Ex: Suporte Headset / Action Figure" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="batchQty">Qtd. no Lote</label>
@@ -346,7 +346,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="weightGrams" title="Peso líquido da peça informado pelo fatiador">Peso da Peça (g)</label>
                         <div class="relative">
-                            <input type="number" id="weightGrams" value="95" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-emerald-300 outline-none">
+                            <input type="number" id="weightGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-emerald-300 outline-none">
                             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
                         </div>
                     </div>
@@ -354,7 +354,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="purgeGrams" title="Torre de limpeza e purga de troca de cor no ACE 2 Pro">Purga / Suporte (g)</label>
                         <div class="relative">
-                            <input type="number" id="purgeGrams" value="15" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none">
+                            <input type="number" id="purgeGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none">
                             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
                         </div>
                     </div>
@@ -362,7 +362,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printHours">Tempo (Horas)</label>
                         <div class="relative">
-                            <input type="number" id="printHours" value="3" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <input type="number" id="printHours" value="" placeholder="0" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-white outline-none">
                             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">h</span>
                         </div>
                     </div>
@@ -370,7 +370,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printMinutes">Tempo (Min)</label>
                         <div class="relative">
-                            <input type="number" id="printMinutes" value="30" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <input type="number" id="printMinutes" value="" placeholder="0" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
                             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
                         </div>
                     </div>
@@ -608,7 +608,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="laborMinutes">Tempo de Acabamento / Pintura Manual (min)</label>
                         <div class="relative">
-                            <input type="number" id="laborMinutes" value="10" min="0" step="5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <input type="number" id="laborMinutes" value="" placeholder="0" min="0" step="5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-mono font-bold text-white outline-none">
                             <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
                         </div>
                     </div>
@@ -1056,7 +1056,7 @@
             pricingStrategy: 'markup', // 'markup' | 'hourly' | 'margin'
             channelId: 'card',
             quickAddons: [
-                { id: 'box', name: 'Caixa + Plástico Bolha', cost: 2.50, active: true },
+                { id: 'box', name: 'Caixa + Plástico Bolha', cost: 2.50, active: false },
                 { id: 'paint', name: 'Primer / Tinta / Verniz', cost: 3.50, active: false },
                 { id: 'keyring', name: 'Argola de Chaveiro / Corrente', cost: 0.80, active: false },
                 { id: 'magnets', name: 'Ímãs de Neodímio / Cola', cost: 1.80, active: false }
@@ -1384,7 +1384,8 @@
             const unitFees = (unitSellingPrice * totalFeePct) + fixedFeePerUnit;
             const unitNetProfit = unitSellingPrice - unitCost - unitFees;
             const netMarginPct = unitSellingPrice > 0 ? (unitNetProfit / unitSellingPrice) * 100 : 0;
-            const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : 0;
+            const currentMarkup = parseFloat(document.getElementById('markupSlider').value) || 3.0;
+            const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : currentMarkup;
             const profitPerPrintHour = totalPrintHours > 0 ? (unitNetProfit * qty) / totalPrintHours : unitNetProfit;
 
             // Wholesale Price (2.0x cost + fees)
@@ -1400,7 +1401,7 @@
             // Update DOM
             document.getElementById('res-unit-price').textContent = formatBRL(unitSellingPrice);
             document.getElementById('mobile-unit-price').textContent = formatBRL(unitSellingPrice);
-            document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x custo`;
+            document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x ${unitCost > 0 ? 'custo' : 'markup'}`;
 
             document.getElementById('batch-badge').textContent = `Lote: ${qty} un`;
             document.getElementById('res-batch-qty').textContent = qty;
