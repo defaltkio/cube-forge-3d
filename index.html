@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cube Forge 3D | Calculadora de Custos & Precificação PRO</title>
+    <meta name="theme-color" content="#09090b">
+    <meta name="description" content="Calculadora de custos, depreciação real e precificação para impressão 3D otimizada para Anycubic Kobra 4 Combo + ACE 2 Pro.">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cube Forge 3D | Calculadora de Custos & Precificação PRO">
+    <meta property="og:description" content="Calculadora de custos, depreciação real por hora e precificação profissional para impressão 3D (Anycubic Kobra 4 Combo / FDM).">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- Embedded Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%2309090b'/%3E%3Cpath d='M256 80L96 172v168l160 92 160-92V172L256 80zm0 52l110 63-110 63-110-63 110-63zm-120 98l102 58v116l-102-58V230zm240 116l-102 58V288l102-58v116z' fill='%2310b981'/%3E%3Ccircle cx='256' cy='195' r='24' fill='%2334d399'/%3E%3C/svg%3E">
+
+    <!-- Fonts: Space Grotesk, Inter, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        canvas: '#09090b',
+                        surface: '#121215',
+                        elevated: '#18181b',
+                        borderdark: '#27272a',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #09090b;
+            color: #fafafa;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+
+        /* Remove spin buttons */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Explicit Active vs Inactive Button States */
+        .selectable-btn {
+            background-color: #18181b;
+            border: 1px solid #27272a;
+            color: #a1a1aa;
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .selectable-btn:hover:not(.is-active) {
+            background-color: #222227;
+            border-color: #3f3f46;
+            color: #e4e4e7;
+        }
+        .selectable-btn.is-active {
+            background-color: rgba(16, 185, 129, 0.18) !important;
+            border: 2px solid #10b981 !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        .selectable-btn .check-badge {
+            display: none;
+        }
+        .selectable-btn.is-active .check-badge {
+            display: inline-flex;
+        }
+        .selectable-btn .inactive-dot {
+            display: inline-block;
+        }
+        .selectable-btn.is-active .inactive-dot {
+            display: none;
+        }
+
+        /* Glass Header */
+        .glass-nav {
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        /* Cross-browser Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #27272a;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #10b981;
+            border: 2px solid #ffffff;
+            margin-top: -6px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+        input[type=range]::-moz-range-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #27272a;
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #10b981;
+            border: 2px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Print Sheet Media Queries */
+        @media print {
+            header, #toast-container, .glass-nav, button, #github-modal, #presets-modal, .no-print, input[type=file] {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .bg-surface, .bg-elevated, .bg-zinc-900, .bg-zinc-950 {
+                background: white !important;
+                border: 1px solid #e4e4e7 !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            .text-white, .text-zinc-100, .text-zinc-200, .text-zinc-300 {
+                color: #09090b !important;
+            }
+            .text-zinc-400, .text-zinc-500 {
+                color: #52525b !important;
+            }
+            .text-emerald-400, .text-emerald-300 {
+                color: #047857 !important;
+            }
+            .print-receipt-header {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-28 lg:pb-16 selection:bg-emerald-500 selection:text-zinc-950">
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-nav border-b border-zinc-800/90 px-4 py-3.5 no-print">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-400/30 shrink-0">
+                    <i data-lucide="box" class="w-6 h-6 text-zinc-950 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">CUBE FORGE <span class="text-emerald-400">3D</span></h1>
+                        <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">PRO v2.5</span>
+                    </div>
+                    <p class="text-xs text-zinc-400 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                        Calibrado p/ <strong class="text-zinc-200">Anycubic Kobra 4 Combo + ACE 2 Pro</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2 sm:gap-2.5">
+                <label class="cursor-pointer px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95" title="Extrair tempo e gramas automaticamente de um arquivo .gcode (OrcaSlicer, Anycubic Slicer, Cura, Bambu Studio)">
+                    <i data-lucide="file-code-2" class="w-4 h-4 text-emerald-400"></i>
+                    <span class="hidden sm:inline">Importar</span>
+                    <span>.GCODE</span>
+                    <input type="file" id="gcode-input" accept=".gcode,.gco,.g" class="hidden" onchange="handleGcodeUpload(event)">
+                </label>
+
+                <button type="button" onclick="openPresetsModal()" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 transition flex items-center gap-1.5 text-xs font-semibold" title="Abrir histórico de orçamentos salvos">
+                    <i data-lucide="bookmark" class="w-4 h-4 text-amber-400"></i>
+                    <span class="hidden md:inline">Orçamentos Salvos</span>
+                    <span id="saved-count-badge" class="px-1.5 py-0.2 rounded bg-zinc-800 text-[10px] font-mono text-zinc-300">0</span>
+                </button>
+
+                <button type="button" onclick="printQuotation()" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 transition flex items-center gap-1.5 text-xs font-semibold" title="Imprimir ou gerar PDF limpo do orçamento">
+                    <i data-lucide="printer" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="hidden lg:inline">Imprimir / PDF</span>
+                </button>
+
+                <button type="button" onclick="openGithubModal()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition flex items-center gap-1.5 active:scale-95">
+                    <i data-lucide="github" class="w-4 h-4 stroke-[2.2]"></i>
+                    <span class="hidden sm:inline">Repositório & Exportar</span>
+                    <span class="sm:hidden">GitHub</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- LEFT COLUMN: 7 COLS ON DESKTOP (INPUTS & MACHINE X-RAY) -->
+        <div class="lg:col-span-7 space-y-6">
+
+            <!-- CARD 1: PROJETO, FATIADOR & FILAMENTO -->
+            <section class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-bold text-base sm:text-lg text-white">1. Dados do Projeto & Filamento</h2>
+                            <p class="text-xs text-zinc-400">Parâmetros do Anycubic Slicer Next / OrcaSlicer</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-mono text-zinc-400 bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800">Base estilo STLFLIX</span>
+                </div>
+
+                <!-- Project Name & Batch Qty -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-5">
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="pieceName">Nome da Peça / Cliente</label>
+                        <input type="text" id="pieceName" value="Dragão Articulado Multicolor (Kobra 4)" placeholder="Ex: Suporte Headset / Action Figure" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="batchQty">Qtd. no Lote</label>
+                        <div class="relative">
+                            <input type="number" id="batchQty" value="1" min="1" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-emerald-500 rounded-xl pl-3.5 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none transition">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">un</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Type Presets -->
+                <div class="mb-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold text-zinc-300">Tipo de Filamento (Selecione um preset ou edite o valor do Kg):</label>
+                        <span class="text-[11px] text-emerald-400 font-mono" id="active-material-label">Selecionado: PLA Padrão</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+                        <button type="button" onclick="selectMaterialPreset('pla', 80, 'PLA Padrão')" id="mat-pla" class="selectable-btn is-active rounded-xl p-2.5 text-left flex flex-col justify-between">
+                            <div class="flex items-center justify-between w-full mb-1">
+                                <span class="text-xs font-bold">PLA Padrão</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-xs font-mono text-emerald-300">R$ 80,00/kg</span>
+                        </button>
+
+                        <button type="button" onclick="selectMaterialPreset('petg', 85, 'PETG Resistente')" id="mat-petg" class="selectable-btn rounded-xl p-2.5 text-left flex flex-col justify-between">
+                            <div class="flex items-center justify-between w-full mb-1">
+                                <span class="text-xs font-bold">PETG</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-xs font-mono text-zinc-400">R$ 85,00/kg</span>
+                        </button>
+
+                        <button type="button" onclick="selectMaterialPreset('silk', 110, 'PLA Silk / Multicor')" id="mat-silk" class="selectable-btn rounded-xl p-2.5 text-left flex flex-col justify-between">
+                            <div class="flex items-center justify-between w-full mb-1">
+                                <span class="text-xs font-bold">PLA Silk / Duo</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-xs font-mono text-zinc-400">R$ 110,00/kg</span>
+                        </button>
+
+                        <button type="button" onclick="selectMaterialPreset('abs', 95, 'ABS / ASA / TPU')" id="mat-abs" class="selectable-btn rounded-xl p-2.5 text-left flex flex-col justify-between">
+                            <div class="flex items-center justify-between w-full mb-1">
+                                <span class="text-xs font-bold">ABS / TPU</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-xs font-mono text-zinc-400">R$ 95,00/kg</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-medium text-zinc-400 mb-1" for="filamentPriceKg">Preço do Rolo de 1 Kg (1000g)</label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                                <input type="number" id="filamentPriceKg" value="80.00" min="1" step="1" oninput="onManualFilamentPriceInput()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-9 pr-14 py-2 text-sm font-mono font-bold text-emerald-400 outline-none">
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-500 font-mono">/ kg</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-zinc-400 mb-1" for="failureRate">Taxa de Segurança p/ Falhas (%)</label>
+                            <div class="relative">
+                                <input type="number" id="failureRate" value="10" min="0" max="100" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3.5 pr-10 py-2 text-sm font-mono font-bold text-amber-400 outline-none">
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weight, Purge (ACE 2 Pro Poop) & Print Time -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-zinc-800/80">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="weightGrams" title="Peso líquido da peça informado pelo fatiador">Peso da Peça (g)</label>
+                        <div class="relative">
+                            <input type="number" id="weightGrams" value="95" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-emerald-300 outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="purgeGrams" title="Torre de limpeza e purga de troca de cor no ACE 2 Pro">Purga / Suporte (g)</label>
+                        <div class="relative">
+                            <input type="number" id="purgeGrams" value="15" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printHours">Tempo (Horas)</label>
+                        <div class="relative">
+                            <input type="number" id="printHours" value="3" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">h</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printMinutes">Tempo (Min)</label>
+                        <div class="relative">
+                            <input type="number" id="printMinutes" value="30" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CARD 2: RAIO-X DE ENERGIA, DEPRECIAÇÃO E MANUTENÇÃO (ANYCUBIC KOBRA 4 COMBO) -->
+            <section class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl relative overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-bold text-base sm:text-lg text-white">2. Raio-X: Energia, Depreciação & Manutenção</h2>
+                            <p class="text-xs text-zinc-400">Estudo técnico real para <strong class="text-zinc-200">Anycubic Kobra 4 Combo + ACE 2 Pro</strong></p>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="resetKobra4ResearchDefaults()" class="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-zinc-700 text-[11px] font-semibold flex items-center gap-1 transition">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        Restaurar Estudo Kobra 4
+                    </button>
+                </div>
+
+                <!-- Machine Calculation Mode Selector -->
+                <div class="mb-5">
+                    <label class="block text-xs font-semibold text-zinc-300 mb-2">Método de Cálculo do Custo/Hora da Impressora:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <button type="button" id="mode-machine-real" onclick="selectMachineMode('real')" class="selectable-btn is-active rounded-xl p-3 text-left flex items-center justify-between gap-2">
+                            <div>
+                                <div class="text-xs font-bold">Cálculo Real Detalhado (Recomendado)</div>
+                                <div class="text-[11px] text-zinc-400 mt-0.5">Soma Energia EDP + Depreciação 5.000h + Manutenção</div>
+                            </div>
+                            <span class="check-badge w-5 h-5 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-xs font-extrabold shrink-0">✓</span>
+                            <span class="inactive-dot w-2.5 h-2.5 rounded-full bg-zinc-700 shrink-0"></span>
+                        </button>
+
+                        <button type="button" id="mode-machine-fixed" onclick="selectMachineMode('fixed')" class="selectable-btn rounded-xl p-3 text-left flex items-center justify-between gap-2">
+                            <div>
+                                <div class="text-xs font-bold">Taxa Fixa Simplificada</div>
+                                <div class="text-[11px] text-zinc-400 mt-0.5">Define um valor único fixo por hora (Ex: R$ 0,85/h)</div>
+                            </div>
+                            <span class="check-badge w-5 h-5 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-xs font-extrabold shrink-0">✓</span>
+                            <span class="inactive-dot w-2.5 h-2.5 rounded-full bg-zinc-700 shrink-0"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PANEL A: DETAILED REAL BREAKDOWN -->
+                <div id="machine-real-panel" class="space-y-5">
+                    
+                    <!-- Sub-block 1: Energia Elétrica + Modo ACE 2 Pro -->
+                    <div class="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-400 font-mono text-xs font-bold flex items-center justify-center">2.1</span>
+                                <h3 class="text-xs sm:text-sm font-bold text-white">Consumo Elétrico Real (Fonte 400W + Secador ACE 2 Pro)</h3>
+                            </div>
+                            <span id="live-energy-hourly" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">R$ 0,24 / hora</span>
+                        </div>
+
+                        <p class="text-[11px] text-zinc-400 leading-relaxed">
+                            A Kobra 4 consome <strong class="text-zinc-200">~140W</strong> imprimindo PLA em 1 cor. Quando o módulo <strong class="text-zinc-200">ACE 2 Pro</strong> está com a secagem ativa a 65°C ligada durante impressões multicoloridas, o consumo médio sobe para <strong class="text-zinc-200">~220W</strong> (ou 250W em PETG).
+                        </p>
+
+                        <!-- ACE 2 Pro Operating Mode Buttons -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <button type="button" id="pwr-140" onclick="selectPowerPreset(140, 'pwr-140')" class="selectable-btn rounded-xl p-2.5 text-left">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold">PLA Simples</span>
+                                    <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                    <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                                </div>
+                                <div class="text-[11px] font-mono text-zinc-400">~140W (ACE Standby)</div>
+                            </button>
+
+                            <button type="button" id="pwr-220" onclick="selectPowerPreset(220, 'pwr-220')" class="selectable-btn is-active rounded-xl p-2.5 text-left">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold">Multicor + Secagem</span>
+                                    <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                    <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                                </div>
+                                <div class="text-[11px] font-mono text-emerald-300">~220W (ACE 65°C On)</div>
+                            </button>
+
+                            <button type="button" id="pwr-250" onclick="selectPowerPreset(250, 'pwr-250')" class="selectable-btn rounded-xl p-2.5 text-left">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold">PETG + Secagem</span>
+                                    <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                    <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                                </div>
+                                <div class="text-[11px] font-mono text-zinc-400">~250W (Mesa 75°C+)</div>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1" for="printerWatts">Potência Média em Uso (Watts)</label>
+                                <div class="relative">
+                                    <input type="number" id="printerWatts" value="220" min="10" step="10" oninput="onManualWattsInput()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-lg pl-3 pr-8 py-2 text-xs font-mono font-bold text-white outline-none">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-zinc-400 font-mono">W</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-[11px] text-zinc-400" for="kwhPrice">Tarifa Energia (R$/kWh)</label>
+                                    <div class="flex gap-1">
+                                        <button type="button" id="kwh-edp-real" onclick="selectKwhTariff(1.11, 'kwh-edp-real')" class="selectable-btn is-active px-1.5 py-0.5 rounded text-[10px] font-mono">EDP c/ Imp. R$1,11</button>
+                                        <button type="button" id="kwh-edp-base" onclick="selectKwhTariff(0.84, 'kwh-edp-base')" class="selectable-btn px-1.5 py-0.5 rounded text-[10px] font-mono">Base R$0,84</button>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] text-zinc-400 font-mono">R$</span>
+                                    <input type="number" id="kwhPrice" value="1.11" min="0.1" step="0.01" oninput="onManualKwhInput()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-lg pl-8 pr-12 py-2 text-xs font-mono font-bold text-white outline-none">
+                                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400 font-mono">/kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-block 2: Depreciação Real da Máquina -->
+                    <div class="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-cyan-500/15 text-cyan-400 font-mono text-xs font-bold flex items-center justify-center">2.2</span>
+                                <h3 class="text-xs sm:text-sm font-bold text-white">Depreciação da Máquina (Amortização em 5.000h)</h3>
+                            </div>
+                            <span id="live-depreciation-hourly" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">R$ 0,67 / hora</span>
+                        </div>
+
+                        <p class="text-[11px] text-zinc-400 leading-relaxed">
+                            <strong class="text-zinc-200">O que é a depreciação?</strong> É a reserva que faz sua impressora se pagar sozinha. Dividindo o valor da máquina (<strong class="text-zinc-200">R$ 3.339</strong>) por 5.000h de vida útil, você guarda <strong class="text-cyan-300">R$ 0,67 por hora impressa</strong> para comprar uma impressora nova quando a vida útil acabar.
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1" for="printerValue">Valor de Compra da Impressora (R$)</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[11px] text-zinc-400 font-mono">R$</span>
+                                    <input type="number" id="printerValue" value="3339" min="500" step="50" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-lg pl-8 pr-3 py-2 text-xs font-mono font-bold text-white outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1" for="printerLifespan">Vida Útil Oficial (Horas de Impressão)</label>
+                                <div class="relative">
+                                    <input type="number" id="printerLifespan" value="5000" min="500" step="500" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-lg pl-3 pr-14 py-2 text-xs font-mono font-bold text-white outline-none">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-zinc-400 font-mono">horas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-block 3: Manutenção Preventiva & Consumíveis -->
+                    <div class="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-400 font-mono text-xs font-bold flex items-center justify-center">2.3</span>
+                                <h3 class="text-xs sm:text-sm font-bold text-white">Manutenção Preventiva & Peças de Desgaste</h3>
+                            </div>
+                            <span id="live-maintenance-hourly" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-purple-500/15 text-purple-300 border border-purple-500/30">R$ 0,25 / hora</span>
+                        </div>
+
+                        <p class="text-[11px] text-zinc-400 leading-relaxed">
+                            Cobre consumíveis que desgastam antes das 5.000h: bicos (nozzles) de aço temperado, chapa PEI, tubos PTFE e lâminas de corte do ACE 2 Pro (~R$ 250 a cada 1.000h = <strong class="text-purple-300">R$ 0,25/h</strong>).
+                        </p>
+
+                        <div class="flex items-center justify-between gap-4">
+                            <span class="text-xs text-zinc-300 font-medium">Reserva de Manutenção por Hora:</span>
+                            <div class="relative w-36">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                                <input type="number" id="maintenanceHourly" value="0.25" min="0" step="0.05" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-lg pl-8 pr-8 py-1.5 text-xs font-mono font-bold text-purple-300 outline-none">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400 font-mono">/h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL B: FIXED HOURLY RATE MODE -->
+                <div id="machine-fixed-panel" class="hidden p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-xs sm:text-sm font-bold text-white">Taxa Hora Simplificada Consolidada</h3>
+                            <p class="text-[11px] text-zinc-400">Valor único por hora englobando energia e desgaste da máquina.</p>
+                        </div>
+                        <div class="relative w-36 shrink-0">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                            <input type="number" id="fixedHourlyCost" value="0.85" min="0" step="0.05" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-8 pr-8 py-2 text-sm font-mono font-bold text-emerald-400 outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">/h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Formula Bar inside Machine Card -->
+                <div class="mt-4 p-3.5 rounded-xl bg-emerald-950/25 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-xs text-zinc-300 flex flex-wrap items-center gap-1.5" id="machine-formula-summary">
+                        <span>Energia <strong class="font-mono text-amber-300">R$ 0,24</strong></span>
+                        <span>+</span>
+                        <span>Depreciação <strong class="font-mono text-cyan-300">R$ 0,67</strong></span>
+                        <span>+</span>
+                        <span>Manutenção <strong class="font-mono text-purple-300">R$ 0,25</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-zinc-400">Total Máquina:</span>
+                        <span id="total-machine-hourly-badge" class="font-mono text-sm font-extrabold text-emerald-400 bg-emerald-500/15 px-2.5 py-1 rounded-lg border border-emerald-500/30">R$ 1,16 / h</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CARD 3: ACABAMENTO, PINTURA, EMBALAGEM & ACESSÓRIOS -->
+            <section class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl">
+                <div class="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+                            <i data-lucide="package-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-bold text-base sm:text-lg text-white">3. Embalagem, Acabamento & Extras</h2>
+                            <p class="text-xs text-zinc-400">Clique nos itens abaixo para marcar/desmarcar no orçamento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Toggleable Add-on Pills -->
+                <div class="mb-5">
+                    <label class="block text-xs font-semibold text-zinc-300 mb-2.5">Checklist Rápido de Insumos (por unidade):</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="quick-addons-grid">
+                        <!-- Rendered dynamically by JS -->
+                    </div>
+                </div>
+
+                <!-- Post-processing / Painting Labor -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-zinc-800/80 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="laborMinutes">Tempo de Acabamento / Pintura Manual (min)</label>
+                        <div class="relative">
+                            <input type="number" id="laborMinutes" value="10" min="0" step="5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3.5 pr-12 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="laborHourlyRate">Valor da sua Hora Manual (R$/h)</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                            <input type="number" id="laborHourlyRate" value="25.00" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-9 pr-10 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">/h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Extra Items -->
+                <div class="pt-3 border-t border-zinc-800/80">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-zinc-300">Itens Extras Personalizados</span>
+                        <button type="button" onclick="addCustomExtra('', 2.00)" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                            Adicionar Item
+                        </button>
+                    </div>
+                    <div id="custom-extras-list" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- CARD 4: ESTRATÉGIA DE PRECIFICAÇÃO & TAXAS DE MARKETPLACE -->
+            <section class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl">
+                <div class="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-bold text-base sm:text-lg text-white">4. Estratégia de Venda & Canais</h2>
+                            <p class="text-xs text-zinc-400">Escolha como definir seu lucro e proteja-se das taxas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Strategy Selector -->
+                <div class="mb-5">
+                    <label class="block text-xs font-semibold text-zinc-300 mb-2">Modo de Precificação:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <button type="button" id="strat-markup" onclick="selectPricingStrategy('markup')" class="selectable-btn is-active rounded-xl p-3 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Markup STLFLIX</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400">Multiplica o custo total (Ex: 3.0x)</p>
+                        </button>
+
+                        <button type="button" id="strat-hourly" onclick="selectPricingStrategy('hourly')" class="selectable-btn rounded-xl p-3 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Meta R$ / Hora</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400">Custo + Lucro por hora (Ex: R$ 20/h)</p>
+                        </button>
+
+                        <button type="button" id="strat-margin" onclick="selectPricingStrategy('margin')" class="selectable-btn rounded-xl p-3 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Margem Líquida %</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <p class="text-[11px] text-zinc-400">Define % de lucro livre no bolso</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Strategy Sub-panel 1: Markup Multiplier -->
+                <div id="panel-strat-markup" class="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 mb-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-zinc-300">Multiplicador de Markup sobre o Custo:</span>
+                        <span id="markup-badge-val" class="font-mono text-base font-extrabold text-emerald-400">3.0x</span>
+                    </div>
+                    <input type="range" id="markupSlider" min="1.5" max="6.0" step="0.1" value="3.0" oninput="onMarkupSliderInput(this.value)" class="w-full mb-3" aria-label="Ajustar multiplicador de markup">
+                    <div class="grid grid-cols-5 gap-2">
+                        <button type="button" id="mk-2.0" onclick="selectMarkupPill(2.0)" class="selectable-btn py-2 rounded-lg text-xs font-mono flex items-center justify-center gap-1">
+                            <span>2.0x</span>
+                            <span class="check-badge text-emerald-400 text-[10px]">✓</span>
+                        </button>
+                        <button type="button" id="mk-2.5" onclick="selectMarkupPill(2.5)" class="selectable-btn py-2 rounded-lg text-xs font-mono flex items-center justify-center gap-1">
+                            <span>2.5x</span>
+                            <span class="check-badge text-emerald-400 text-[10px]">✓</span>
+                        </button>
+                        <button type="button" id="mk-3.0" onclick="selectMarkupPill(3.0)" class="selectable-btn is-active py-2 rounded-lg text-xs font-mono flex items-center justify-center gap-1">
+                            <span>3.0x</span>
+                            <span class="check-badge text-emerald-400 text-[10px]">✓</span>
+                        </button>
+                        <button type="button" id="mk-4.0" onclick="selectMarkupPill(4.0)" class="selectable-btn py-2 rounded-lg text-xs font-mono flex items-center justify-center gap-1">
+                            <span>4.0x</span>
+                            <span class="check-badge text-emerald-400 text-[10px]">✓</span>
+                        </button>
+                        <button type="button" id="mk-5.0" onclick="selectMarkupPill(5.0)" class="selectable-btn py-2 rounded-lg text-xs font-mono flex items-center justify-center gap-1">
+                            <span>5.0x</span>
+                            <span class="check-badge text-emerald-400 text-[10px]">✓</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Strategy Sub-panel 2: Target Profit Per Print Hour -->
+                <div id="panel-strat-hourly" class="hidden p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 mb-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-white block" for="targetHourlyProfit">Meta de Lucro Líquido por Hora de Impressão</label>
+                            <p class="text-[11px] text-zinc-400">Cobra todos os custos + R$ definidos por cada hora que a Kobra 4 trabalhar.</p>
+                        </div>
+                        <div class="relative w-36">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                            <input type="number" id="targetHourlyProfit" value="20.00" min="1" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-8 pr-8 py-2 text-sm font-mono font-bold text-emerald-400 outline-none">
+                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">/h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy Sub-panel 3: Target Net Margin % -->
+                <div id="panel-strat-margin" class="hidden p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 mb-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-white block" for="targetMarginPct">Margem de Lucro Líquida Desejada (%)</label>
+                            <p class="text-[11px] text-zinc-400">Calculada por fora para garantir esta porcentagem livre após todas as taxas.</p>
+                        </div>
+                        <div class="relative w-32">
+                            <input type="number" id="targetMarginPct" value="50" min="5" max="85" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3.5 pr-8 py-2 text-sm font-mono font-bold text-emerald-400 outline-none">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Channel & Marketplace Presets -->
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-2">Canal de Venda / Taxas de Pagamento:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+                        <button type="button" id="chan-pix" onclick="selectChannelPreset('pix', 0, 0)" class="selectable-btn rounded-xl p-2.5 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Venda Direta / PIX</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-[11px] font-mono text-zinc-400">0% taxa</span>
+                        </button>
+
+                        <button type="button" id="chan-card" onclick="selectChannelPreset('card', 4.99, 0)" class="selectable-btn is-active rounded-xl p-2.5 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Cartão / Link</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-[11px] font-mono text-emerald-300">4,99% taxa</span>
+                        </button>
+
+                        <button type="button" id="chan-shopee" onclick="selectChannelPreset('shopee', 20, 4.00)" class="selectable-btn rounded-xl p-2.5 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Shopee Padrão</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-[11px] font-mono text-zinc-400">20% + R$ 4,00/un</span>
+                        </button>
+
+                        <button type="button" id="chan-ml" onclick="selectChannelPreset('ml', 16.5, 6.00)" class="selectable-btn rounded-xl p-2.5 text-left">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold">Mercado Livre</span>
+                                <span class="check-badge w-4 h-4 rounded-full bg-emerald-500 text-zinc-950 items-center justify-center text-[10px] font-extrabold">✓</span>
+                                <span class="inactive-dot w-2 h-2 rounded-full bg-zinc-700"></span>
+                            </div>
+                            <span class="text-[11px] font-mono text-zinc-400">16,5% + R$ 6,00</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-zinc-400 mb-1" for="marketplaceFeePct">Comissão / Cartão (%)</label>
+                            <div class="relative">
+                                <input type="number" id="marketplaceFeePct" value="4.99" min="0" max="70" step="0.1" oninput="onManualChannelInput()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-8 py-2 text-xs font-mono font-bold text-white outline-none">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-zinc-400 mb-1" for="marketplaceFixedFee">Taxa Fixa por Venda (R$/un)</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">R$</span>
+                                <input type="number" id="marketplaceFixedFee" value="0.00" min="0" step="0.50" oninput="onManualChannelInput()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-8 pr-3 py-2 text-xs font-mono font-bold text-white outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-zinc-400 mb-1" for="taxFeePct">Imposto / Nota Fiscal (%)</label>
+                            <div class="relative">
+                                <input type="number" id="taxFeePct" value="0" min="0" max="40" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-8 py-2 text-xs font-mono font-bold text-white outline-none">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- RIGHT COLUMN: 5 COLS ON DESKTOP (STICKY RECEIPT & ANALYTICS) -->
+        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-5">
+
+            <!-- MAIN FINANCIAL RECEIPT CARD -->
+            <section class="rounded-2xl bg-gradient-to-b from-[#141918] to-surface border-2 border-emerald-500/40 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-20 -right-20 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        Preço Final Sugerido
+                    </span>
+                    <span id="batch-badge" class="text-xs font-mono font-semibold bg-zinc-900 text-zinc-300 px-2.5 py-0.5 rounded-md border border-zinc-700">Lote: 1 un</span>
+                </div>
+
+                <!-- Hero Price Display -->
+                <div class="mb-5 pb-4 border-b border-zinc-800/90">
+                    <div class="text-xs text-zinc-400 mb-1">Valor Unitário ao Cliente</div>
+                    <div class="flex items-baseline justify-between gap-2 flex-wrap">
+                        <span id="res-unit-price" class="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">R$ 0,00</span>
+                        <span id="res-effective-markup" class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">3.0x custo</span>
+                    </div>
+                    <!-- Batch row displayed conditionally when batchQty > 1 -->
+                    <div id="res-batch-row" class="hidden mt-2 flex items-center justify-between text-xs font-mono text-emerald-300 bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                        <span>Total do Lote (<span id="res-batch-qty">1</span> un):</span>
+                        <strong id="res-batch-price" class="text-sm">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <!-- Key Financial Indicators -->
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                        <span class="text-[11px] text-zinc-400 block mb-0.5">Custo Produção (Un.)</span>
+                        <span id="res-unit-cost" class="text-lg font-mono font-bold text-zinc-100">R$ 0,00</span>
+                        <span id="res-batch-cost" class="text-[11px] font-mono text-zinc-500 block mt-0.5">Lote: R$ 0,00</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
+                        <span class="text-[11px] text-emerald-300/90 block mb-0.5">Lucro Líquido Livre</span>
+                        <span id="res-net-profit" class="text-lg font-mono font-extrabold text-emerald-400">R$ 0,00</span>
+                        <div class="flex items-center justify-between text-[11px] font-mono text-emerald-300/80 mt-0.5">
+                            <span id="res-profit-margin">Margem: 0%</span>
+                            <span id="res-profit-per-hour">R$ 0/h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stacked Composition Bar -->
+                <div class="mb-5">
+                    <div class="flex items-center justify-between text-xs mb-1.5">
+                        <span class="font-semibold text-zinc-300">Raio-X de Cada Peça Vendida</span>
+                        <span class="text-[11px] font-mono text-zinc-400" id="lbl-total-weight-time">110g • 3h30m</span>
+                    </div>
+                    <div class="w-full h-3.5 rounded-full bg-zinc-900 overflow-hidden flex p-0.5 border border-zinc-800 mb-3">
+                        <div id="bar-filament" style="width: 20%" class="bg-emerald-400 h-full transition-all duration-300 first:rounded-l-full" title="Filamento + Purga"></div>
+                        <div id="bar-machine" style="width: 15%" class="bg-cyan-400 h-full transition-all duration-300" title="Energia + Depreciação + Manutenção"></div>
+                        <div id="bar-extras" style="width: 15%" class="bg-purple-400 h-full transition-all duration-300" title="Embalagem + Acabamento"></div>
+                        <div id="bar-fees" style="width: 10%" class="bg-amber-400 h-full transition-all duration-300" title="Taxas e Impostos"></div>
+                        <div id="bar-profit" style="width: 40%" class="bg-emerald-600 h-full transition-all duration-300 last:rounded-r-full" title="Lucro Líquido"></div>
+                    </div>
+
+                    <!-- Itemized Ledger -->
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center justify-between py-1 border-b border-zinc-800/60">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-emerald-400"></span>
+                                <span class="text-zinc-300">Filamento + Purga + Risco</span>
+                            </div>
+                            <div class="font-mono">
+                                <span id="val-filament" class="font-bold text-zinc-100">R$ 0,00</span>
+                                <span id="pct-filament" class="text-zinc-500 text-[11px] ml-1">(0%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between py-1 border-b border-zinc-800/60">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-cyan-400"></span>
+                                <span class="text-zinc-300">Máquina (Energia + Deprec. + Manut.)</span>
+                            </div>
+                            <div class="font-mono">
+                                <span id="val-machine" class="font-bold text-zinc-100">R$ 0,00</span>
+                                <span id="pct-machine" class="text-zinc-500 text-[11px] ml-1">(0%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between py-1 border-b border-zinc-800/60">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-purple-400"></span>
+                                <span class="text-zinc-300">Embalagem, Pintura & Mão de Obra</span>
+                            </div>
+                            <div class="font-mono">
+                                <span id="val-extras" class="font-bold text-zinc-100">R$ 0,00</span>
+                                <span id="pct-extras" class="text-zinc-500 text-[11px] ml-1">(0%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between py-1 border-b border-zinc-800/60">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-amber-400"></span>
+                                <span class="text-zinc-300">Taxas do Canal / Impostos</span>
+                            </div>
+                            <div class="font-mono">
+                                <span id="val-fees" class="font-bold text-amber-300">R$ 0,00</span>
+                                <span id="pct-fees" class="text-zinc-500 text-[11px] ml-1">(0%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
+                                <span class="font-bold text-emerald-400">Lucro Líquido Real (Bolso)</span>
+                            </div>
+                            <div class="font-mono">
+                                <span id="val-profit" class="font-extrabold text-emerald-400">R$ 0,00</span>
+                                <span id="pct-profit" class="text-emerald-500 text-[11px] ml-1">(0%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wholesale / Atacado Reference -->
+                <div class="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800 flex items-center justify-between mb-5">
+                    <div>
+                        <span class="text-xs font-bold text-zinc-200 block">Preço Atacado / Revenda (2.0x)</span>
+                        <span class="text-[11px] text-zinc-400">Para lojistas ou pedidos acima de 10 un.</span>
+                    </div>
+                    <span id="res-wholesale-price" class="font-mono text-base font-extrabold text-amber-400">R$ 0,00</span>
+                </div>
+
+                <!-- Primary Action Buttons -->
+                <div class="grid grid-cols-2 gap-2.5 no-print">
+                    <button type="button" onclick="copyWhatsAppQuote()" class="py-3 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 transition active:scale-95">
+                        <i data-lucide="share-2" class="w-4 h-4 stroke-[2.2]"></i>
+                        <span>Copiar p/ WhatsApp</span>
+                    </button>
+                    <button type="button" onclick="saveCurrentPreset()" class="py-3 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Salvar Orçamento</span>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MOBILE STICKY BOTTOM SUMMARY -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-nav border-t border-zinc-800 px-4 py-3 shadow-2xl no-print">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div>
+                <span class="text-[10px] uppercase tracking-wider text-zinc-400 block">Preço de Venda</span>
+                <div class="flex items-baseline gap-2">
+                    <span id="mobile-unit-price" class="text-xl font-extrabold font-mono text-white">R$ 0,00</span>
+                    <span id="mobile-profit-badge" class="text-xs font-mono font-bold text-emerald-400">+R$ 0,00 lucro</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="openGithubModal()" class="p-2.5 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700" title="Informações e exportação">
+                    <i data-lucide="github" class="w-4 h-4"></i>
+                </button>
+                <button type="button" onclick="copyWhatsAppQuote()" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>Orçamento</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GITHUB & REPOSITÓRIO -->
+    <div id="github-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 no-print" role="dialog" aria-modal="true">
+        <div class="bg-surface border border-zinc-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button type="button" onclick="closeModal('github-modal')" class="absolute top-4 right-4 p-2 rounded-full bg-zinc-800 text-zinc-400 hover:text-white" aria-label="Fechar modal">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="github" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-display text-lg font-bold text-white">GitHub Pages & Código Fonte</h3>
+                    <p class="text-xs text-zinc-400">Projeto Cube Forge 3D | 100% Client-Side</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-5 text-xs text-zinc-300 bg-zinc-900/90 p-4 rounded-2xl border border-zinc-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-zinc-400 font-mono text-[11px]">Repositório GitHub:</span>
+                    <a href="https://github.com/defaltkio/cube-forge-3d" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline font-bold font-mono">defaltkio/cube-forge-3d</a>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-zinc-400 font-mono text-[11px]">Link Online (Pages):</span>
+                    <a href="https://defaltkio.github.io/cube-forge-3d/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline font-bold font-mono truncate max-w-[220px]">defaltkio.github.io/cube-forge-3d</a>
+                </div>
+                <hr class="border-zinc-800">
+                <p class="text-[11px] text-zinc-400 leading-relaxed">
+                    Você pode clonar este repositório, usar localmente em qualquer navegador ou baixar o arquivo único <code class="text-emerald-300 font-mono">index.html</code>.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button type="button" onclick="downloadIndexHtml()" class="py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition">
+                    <i data-lucide="download" class="w-4 h-4 stroke-[2.2]"></i>
+                    <span>Baixar index.html</span>
+                </button>
+                <button type="button" onclick="copyFullHtmlCode()" class="py-3 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 font-bold text-xs flex items-center justify-center gap-2 transition">
+                    <i data-lucide="code-2" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Copiar Código HTML</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SAVED PROJECTS -->
+    <div id="presets-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 no-print" role="dialog" aria-modal="true">
+        <div class="bg-surface border border-zinc-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="bookmark" class="w-5 h-5 text-emerald-400"></i>
+                    <h3 class="font-display text-lg font-bold text-white">Orçamentos Salvos no Navegador</h3>
+                </div>
+                <button type="button" onclick="closeModal('presets-modal')" class="p-2 rounded-full bg-zinc-800 text-zinc-400 hover:text-white" aria-label="Fechar modal">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="saved-presets-list" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+
+            <div class="mt-4 pt-3 border-t border-zinc-800 flex justify-between items-center">
+                <span class="text-xs text-zinc-400">Armazenado no LocalStorage</span>
+                <button type="button" onclick="saveCurrentPreset()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition">
+                    + Salvar Orçamento Atual
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION SCRIPT -->
+    <script>
+        // --- 1. APPLICATION STATE ---
+        const state = {
+            materialId: 'pla',
+            machineMode: 'real', // 'real' | 'fixed'
+            powerPresetId: 'pwr-220',
+            kwhPresetId: 'kwh-edp-real',
+            pricingStrategy: 'markup', // 'markup' | 'hourly' | 'margin'
+            channelId: 'card',
+            quickAddons: [
+                { id: 'box', name: 'Caixa + Plástico Bolha', cost: 2.50, active: true },
+                { id: 'paint', name: 'Primer / Tinta / Verniz', cost: 3.50, active: false },
+                { id: 'keyring', name: 'Argola de Chaveiro / Corrente', cost: 0.80, active: false },
+                { id: 'magnets', name: 'Ímãs de Neodímio / Cola', cost: 1.80, active: false }
+            ],
+            customExtras: []
+        };
+
+        let lastCalc = {};
+
+        // --- 2. HELPER TO UPDATE ACTIVE GROUP BUTTONS ---
+        function setActiveButtonInGroup(buttonIds, activeId) {
+            buttonIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (id === activeId) {
+                    el.classList.add('is-active');
+                } else {
+                    el.classList.remove('is-active');
+                }
+            });
+        }
+
+        // --- 3. MATERIAL PRESETS ---
+        function selectMaterialPreset(matKey, price, label) {
+            state.materialId = matKey;
+            document.getElementById('filamentPriceKg').value = price.toFixed(2);
+            document.getElementById('active-material-label').textContent = `Selecionado: ${label}`;
+            setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], `mat-${matKey}`);
+            calculateAll();
+        }
+
+        function onManualFilamentPriceInput() {
+            setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], null);
+            document.getElementById('active-material-label').textContent = 'Preço Personalizado';
+            calculateAll();
+        }
+
+        // --- 4. MACHINE, ENERGY & DEPRECIATION CONTROLS ---
+        function selectMachineMode(mode) {
+            state.machineMode = mode;
+            setActiveButtonInGroup(['mode-machine-real', 'mode-machine-fixed'], `mode-machine-${mode}`);
+            const realPanel = document.getElementById('machine-real-panel');
+            const fixedPanel = document.getElementById('machine-fixed-panel');
+
+            if (mode === 'real') {
+                realPanel.classList.remove('hidden');
+                fixedPanel.classList.add('hidden');
+            } else {
+                fixedPanel.classList.remove('hidden');
+                realPanel.classList.add('hidden');
+            }
+            calculateAll();
+        }
+
+        function selectPowerPreset(watts, btnId) {
+            state.powerPresetId = btnId;
+            document.getElementById('printerWatts').value = watts;
+            setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], btnId);
+            calculateAll();
+        }
+
+        function onManualWattsInput() {
+            setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], null);
+            calculateAll();
+        }
+
+        function selectKwhTariff(val, btnId) {
+            state.kwhPresetId = btnId;
+            document.getElementById('kwhPrice').value = val.toFixed(2);
+            setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], btnId);
+            calculateAll();
+        }
+
+        function onManualKwhInput() {
+            setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], null);
+            calculateAll();
+        }
+
+        function resetKobra4ResearchDefaults() {
+            document.getElementById('printerValue').value = '3339';
+            document.getElementById('printerLifespan').value = '5000';
+            document.getElementById('maintenanceHourly').value = '0.25';
+            selectPowerPreset(220, 'pwr-220');
+            selectKwhTariff(1.11, 'kwh-edp-real');
+            selectMachineMode('real');
+            showToast('Estudo técnico Anycubic Kobra 4 Combo restaurado!', 'success');
+        }
+
+        // --- 5. QUICK ADD-ON CHECKLIST & CUSTOM EXTRAS ---
+        function renderQuickAddons() {
+            const grid = document.getElementById('quick-addons-grid');
+            grid.innerHTML = '';
+
+            state.quickAddons.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `selectable-btn ${item.active ? 'is-active' : ''} rounded-xl p-2.5 flex items-center justify-between gap-2 cursor-pointer`;
+                div.onclick = (e) => {
+                    if (e.target.tagName.toLowerCase() === 'input') return;
+                    item.active = !item.active;
+                    renderQuickAddons();
+                    calculateAll();
+                };
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="check-badge w-5 h-5 rounded-md bg-emerald-500 text-zinc-950 items-center justify-center text-xs font-extrabold shrink-0">✓</span>
+                        <span class="inactive-dot w-5 h-5 rounded-md border border-zinc-700 bg-zinc-900 shrink-0"></span>
+                        <span class="text-xs font-semibold truncate">${escapeHtml(item.name)}</span>
+                    </div>
+                    <div class="relative w-24 shrink-0" onclick="event.stopPropagation()">
+                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400 font-mono">R$</span>
+                        <input type="number" value="${item.cost.toFixed(2)}" min="0" step="0.10"
+                            oninput="updateQuickAddonCost('${item.id}', this.value)"
+                            class="w-full bg-zinc-950/90 border border-zinc-700 focus:border-emerald-400 rounded-lg pl-6 pr-2 py-1 text-xs font-mono font-bold text-white outline-none">
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function updateQuickAddonCost(id, val) {
+            const item = state.quickAddons.find(a => a.id === id);
+            if (item) {
+                item.cost = parseFloat(val) || 0;
+                calculateAll();
+            }
+        }
+
+        function renderCustomExtras() {
+            const container = document.getElementById('custom-extras-list');
+            container.innerHTML = '';
+
+            if (state.customExtras.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-zinc-500 italic">Nenhum item extra personalizado adicionado.</p>`;
+                return;
+            }
+
+            state.customExtras.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2 bg-zinc-900/80 p-2 rounded-xl border border-zinc-800';
+                row.innerHTML = `
+                    <input type="text" value="${escapeHtml(item.name)}" placeholder="Descrição do item..."
+                        oninput="updateCustomExtra(${item.id}, 'name', this.value)"
+                        class="flex-1 bg-elevated border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none">
+                    <div class="relative w-28 shrink-0">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] text-zinc-400 font-mono">R$</span>
+                        <input type="number" value="${item.cost}" min="0" step="0.10"
+                            oninput="updateCustomExtra(${item.id}, 'cost', parseFloat(this.value) || 0)"
+                            class="w-full bg-elevated border border-zinc-700 rounded-lg pl-7 pr-2 py-1.5 text-xs font-mono font-bold text-white outline-none">
+                    </div>
+                    <button type="button" onclick="removeCustomExtra(${item.id})" class="p-1.5 text-zinc-500 hover:text-rose-400" aria-label="Remover item">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                container.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        function addCustomExtra(name = '', cost = 2.00) {
+            state.customExtras.push({ id: Date.now() + Math.random(), name, cost });
+            renderCustomExtras();
+            calculateAll();
+        }
+
+        function updateCustomExtra(id, field, val) {
+            const item = state.customExtras.find(e => e.id === id);
+            if (item) {
+                item[field] = val;
+                calculateAll();
+            }
+        }
+
+        function removeCustomExtra(id) {
+            state.customExtras = state.customExtras.filter(e => e.id !== id);
+            renderCustomExtras();
+            calculateAll();
+        }
+
+        // --- 6. PRICING STRATEGY & SALES CHANNEL CONTROLS ---
+        function selectPricingStrategy(strategy) {
+            state.pricingStrategy = strategy;
+            setActiveButtonInGroup(['strat-markup', 'strat-hourly', 'strat-margin'], `strat-${strategy}`);
+
+            document.getElementById('panel-strat-markup').classList.toggle('hidden', strategy !== 'markup');
+            document.getElementById('panel-strat-hourly').classList.toggle('hidden', strategy !== 'hourly');
+            document.getElementById('panel-strat-margin').classList.toggle('hidden', strategy !== 'margin');
+            calculateAll();
+        }
+
+        function selectMarkupPill(val) {
+            document.getElementById('markupSlider').value = val;
+            document.getElementById('markup-badge-val').textContent = val.toFixed(1) + 'x';
+            setActiveButtonInGroup(['mk-2.0', 'mk-2.5', 'mk-3.0', 'mk-4.0', 'mk-5.0'], `mk-${val.toFixed(1)}`);
+            calculateAll();
+        }
+
+        function onMarkupSliderInput(val) {
+            const num = parseFloat(val) || 3.0;
+            document.getElementById('markup-badge-val').textContent = num.toFixed(1) + 'x';
+            setActiveButtonInGroup(['mk-2.0', 'mk-2.5', 'mk-3.0', 'mk-4.0', 'mk-5.0'], `mk-${num.toFixed(1)}`);
+            calculateAll();
+        }
+
+        function selectChannelPreset(chanKey, pctFee, fixedFee) {
+            state.channelId = chanKey;
+            document.getElementById('marketplaceFeePct').value = pctFee;
+            document.getElementById('marketplaceFixedFee').value = fixedFee.toFixed(2);
+            setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], `chan-${chanKey}`);
+            calculateAll();
+        }
+
+        function onManualChannelInput() {
+            setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], null);
+            calculateAll();
+        }
+
+        // --- 7. CORE CALCULATION ENGINE ---
+        function calculateAll() {
+            const pieceName = document.getElementById('pieceName').value.trim() || 'Peça Impressa 3D';
+            const qty = Math.max(1, parseInt(document.getElementById('batchQty').value) || 1);
+            const partGrams = Math.max(0, parseFloat(document.getElementById('weightGrams').value) || 0);
+            const purgeGrams = Math.max(0, parseFloat(document.getElementById('purgeGrams').value) || 0);
+            const totalGramsBatch = partGrams + purgeGrams;
+
+            const hours = Math.max(0, parseFloat(document.getElementById('printHours').value) || 0);
+            const minutes = Math.max(0, parseFloat(document.getElementById('printMinutes').value) || 0);
+            const totalPrintHours = hours + (minutes / 60);
+
+            const filamentPriceKg = Math.max(0, parseFloat(document.getElementById('filamentPriceKg').value) || 0);
+            const failureRate = Math.max(0, parseFloat(document.getElementById('failureRate').value) || 0) / 100;
+
+            // Machine Hourly Breakdown
+            let energyHourly = 0;
+            let depreciationHourly = 0;
+            let maintenanceHourly = 0;
+            let totalMachineHourly = 0;
+
+            if (state.machineMode === 'real') {
+                const watts = Math.max(0, parseFloat(document.getElementById('printerWatts').value) || 0);
+                const kwh = Math.max(0, parseFloat(document.getElementById('kwhPrice').value) || 0);
+                const printerVal = Math.max(0, parseFloat(document.getElementById('printerValue').value) || 0);
+                const lifespan = Math.max(100, parseFloat(document.getElementById('printerLifespan').value) || 5000);
+                maintenanceHourly = Math.max(0, parseFloat(document.getElementById('maintenanceHourly').value) || 0);
+
+                energyHourly = (watts / 1000) * kwh;
+                depreciationHourly = printerVal / lifespan;
+                totalMachineHourly = energyHourly + depreciationHourly + maintenanceHourly;
+
+                document.getElementById('live-energy-hourly').textContent = `${formatBRL(energyHourly)} / hora`;
+                document.getElementById('live-depreciation-hourly').textContent = `${formatBRL(depreciationHourly)} / hora`;
+                document.getElementById('live-maintenance-hourly').textContent = `${formatBRL(maintenanceHourly)} / hora`;
+
+                document.getElementById('machine-formula-summary').innerHTML = `
+                    <span>Energia <strong class="font-mono text-amber-300">${formatBRL(energyHourly)}</strong></span>
+                    <span>+</span>
+                    <span>Depreciação <strong class="font-mono text-cyan-300">${formatBRL(depreciationHourly)}</strong></span>
+                    <span>+</span>
+                    <span>Manutenção <strong class="font-mono text-purple-300">${formatBRL(maintenanceHourly)}</strong></span>
+                `;
+            } else {
+                totalMachineHourly = Math.max(0, parseFloat(document.getElementById('fixedHourlyCost').value) || 0);
+                document.getElementById('machine-formula-summary').innerHTML = `
+                    <span>Modo Taxa Fixa Simplificada Ativo</span>
+                `;
+            }
+
+            document.getElementById('total-machine-hourly-badge').textContent = `${formatBRL(totalMachineHourly)} / h`;
+
+            // Batch Direct Costs (with failure rate risk factor)
+            const rawFilamentCostBatch = (totalGramsBatch / 1000) * filamentPriceKg;
+            const rawMachineCostBatch = totalPrintHours * totalMachineHourly;
+
+            const filamentCostBatch = rawFilamentCostBatch * (1 + failureRate);
+            const machineCostBatch = rawMachineCostBatch * (1 + failureRate);
+
+            // Packaging, Finishing & Manual Labor (per unit)
+            let addonsPerUnit = 0;
+            state.quickAddons.forEach(a => {
+                if (a.active) addonsPerUnit += Math.max(0, a.cost);
+            });
+            state.customExtras.forEach(c => {
+                addonsPerUnit += Math.max(0, parseFloat(c.cost) || 0);
+            });
+
+            const laborMins = Math.max(0, parseFloat(document.getElementById('laborMinutes').value) || 0);
+            const laborRate = Math.max(0, parseFloat(document.getElementById('laborHourlyRate').value) || 0);
+            const laborPerUnit = (laborMins / 60) * laborRate;
+
+            const totalExtrasBatch = (addonsPerUnit + laborPerUnit) * qty;
+
+            // Total Production Cost
+            const totalBatchCost = filamentCostBatch + machineCostBatch + totalExtrasBatch;
+            const unitCost = totalBatchCost / qty;
+
+            // Marketplace & Tax Fees
+            const mktPct = Math.max(0, parseFloat(document.getElementById('marketplaceFeePct').value) || 0) / 100;
+            const taxPct = Math.max(0, parseFloat(document.getElementById('taxFeePct').value) || 0) / 100;
+            const totalFeePct = Math.min(0.90, mktPct + taxPct);
+            const fixedFeePerUnit = Math.max(0, parseFloat(document.getElementById('marketplaceFixedFee').value) || 0);
+
+            // Target Selling Price per Unit (Reverse Fee Protection)
+            let unitSellingPrice = 0;
+            if (state.pricingStrategy === 'markup') {
+                const markup = parseFloat(document.getElementById('markupSlider').value) || 3.0;
+                const desiredNetRevenue = unitCost * markup;
+                unitSellingPrice = (desiredNetRevenue + fixedFeePerUnit) / (1 - totalFeePct);
+            } else if (state.pricingStrategy === 'hourly') {
+                const targetHourlyProfit = Math.max(0, parseFloat(document.getElementById('targetHourlyProfit').value) || 20);
+                const targetProfitPerUnit = (totalPrintHours * targetHourlyProfit) / qty;
+                const desiredNetRevenue = unitCost + targetProfitPerUnit;
+                unitSellingPrice = (desiredNetRevenue + fixedFeePerUnit) / (1 - totalFeePct);
+            } else {
+                const targetMargin = Math.min(0.85, (parseFloat(document.getElementById('targetMarginPct').value) || 50) / 100);
+                const denom = Math.max(0.05, 1 - targetMargin - totalFeePct);
+                unitSellingPrice = (unitCost + fixedFeePerUnit) / denom;
+            }
+
+            const batchSellingPrice = unitSellingPrice * qty;
+
+            // Breakdown per unit
+            const unitFilament = filamentCostBatch / qty;
+            const unitMachine = machineCostBatch / qty;
+            const unitExtras = totalExtrasBatch / qty;
+            const unitFees = (unitSellingPrice * totalFeePct) + fixedFeePerUnit;
+            const unitNetProfit = unitSellingPrice - unitCost - unitFees;
+            const netMarginPct = unitSellingPrice > 0 ? (unitNetProfit / unitSellingPrice) * 100 : 0;
+            const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : 0;
+            const profitPerPrintHour = totalPrintHours > 0 ? (unitNetProfit * qty) / totalPrintHours : unitNetProfit;
+
+            // Wholesale Price (2.0x cost + fees)
+            const unitWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / (1 - totalFeePct);
+
+            lastCalc = {
+                pieceName, qty, totalGramsBatch, hours, minutes,
+                unitCost, totalBatchCost, unitSellingPrice, batchSellingPrice,
+                unitNetProfit, netMarginPct, effectiveMarkup, profitPerPrintHour,
+                unitWholesalePrice, totalMachineHourly
+            };
+
+            // Update DOM
+            document.getElementById('res-unit-price').textContent = formatBRL(unitSellingPrice);
+            document.getElementById('mobile-unit-price').textContent = formatBRL(unitSellingPrice);
+            document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x custo`;
+
+            document.getElementById('batch-badge').textContent = `Lote: ${qty} un`;
+            document.getElementById('res-batch-qty').textContent = qty;
+            document.getElementById('res-batch-price').textContent = formatBRL(batchSellingPrice);
+
+            // Conditionally show batch row when qty > 1
+            const batchRow = document.getElementById('res-batch-row');
+            if (qty > 1) {
+                batchRow.classList.remove('hidden');
+            } else {
+                batchRow.classList.add('hidden');
+            }
+
+            document.getElementById('res-unit-cost').textContent = formatBRL(unitCost);
+            document.getElementById('res-batch-cost').textContent = `Lote: ${formatBRL(totalBatchCost)}`;
+
+            document.getElementById('res-net-profit').textContent = formatBRL(unitNetProfit);
+            document.getElementById('res-profit-margin').textContent = `Margem: ${netMarginPct.toFixed(0)}%`;
+            document.getElementById('res-profit-per-hour').textContent = `${formatBRL(profitPerPrintHour)}/h`;
+            document.getElementById('mobile-profit-badge').textContent = `+${formatBRL(unitNetProfit)} líq.`;
+
+            document.getElementById('res-wholesale-price').textContent = formatBRL(unitWholesalePrice);
+            document.getElementById('lbl-total-weight-time').textContent = `${totalGramsBatch}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
+
+            updateBarRow('filament', unitFilament, unitSellingPrice);
+            updateBarRow('machine', unitMachine, unitSellingPrice);
+            updateBarRow('extras', unitExtras, unitSellingPrice);
+            updateBarRow('fees', unitFees, unitSellingPrice);
+            updateBarRow('profit', Math.max(0, unitNetProfit), unitSellingPrice);
+        }
+
+        function updateBarRow(key, val, total) {
+            const pct = total > 0 ? Math.max(0, (val / total) * 100) : 0;
+            document.getElementById(`val-${key}`).textContent = formatBRL(val);
+            document.getElementById(`pct-${key}`).textContent = `(${pct.toFixed(0)}%)`;
+            document.getElementById(`bar-${key}`).style.width = `${pct}%`;
+        }
+
+        // --- 8. MULTI-SLICER G-CODE PARSER ---
+        function handleGcodeUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                // Read start and end slices where slicer comments usually sit
+                const sample = content.slice(0, 30000) + '\n' + content.slice(-30000);
+
+                let extractedWeight = null;
+                let extractedSeconds = null;
+
+                // Support Anycubic Slicer Next, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura, Simplify3D
+                const weightRegexes = [
+                    /;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[:=]\s*([0-9.]+)/i,
+                    /;\s*(?:total\s+)?filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.]+)/i,
+                    /;\s*(?:total\s+)?filament\s+used\s*[:=]\s*([0-9.]+)\s*g/i,
+                    /;\s*Filament\s+weight\s*[:=]\s*([0-9.]+)\s*g/i
+                ];
+
+                for (const rx of weightRegexes) {
+                    const m = sample.match(rx);
+                    if (m && m[1]) {
+                        extractedWeight = parseFloat(m[1]);
+                        break;
+                    }
+                }
+
+                // Filament length in meters or mm if weight not explicitly found (approx 3g per meter of 1.75mm PLA)
+                if (extractedWeight === null) {
+                    const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.]+)/i) ||
+                                     sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.]+)/i);
+                    if (lenMatch && lenMatch[1]) {
+                        const meters = lenMatch[0].includes('[mm]') ? parseFloat(lenMatch[1]) / 1000 : parseFloat(lenMatch[1]);
+                        extractedWeight = meters * 3.0; // Standard 1.75mm PLA estimation (~3g/m)
+                    }
+                }
+
+                // Time regexes across various slicers
+                const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
+                const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
+
+                if (slicerTime && (slicerTime[1] || slicerTime[2] || slicerTime[3])) {
+                    const d = parseInt(slicerTime[1] || 0);
+                    const h = parseInt(slicerTime[2] || 0);
+                    const m = parseInt(slicerTime[3] || 0);
+                    extractedSeconds = (d * 86400) + (h * 3600) + (m * 60);
+                } else if (curaTime && curaTime[1]) {
+                    extractedSeconds = parseInt(curaTime[1]);
+                }
+
+                document.getElementById('pieceName').value = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
+                if (extractedWeight !== null && !isNaN(extractedWeight)) {
+                    document.getElementById('weightGrams').value = extractedWeight.toFixed(1);
+                    document.getElementById('purgeGrams').value = '0';
+                }
+                if (extractedSeconds !== null && extractedSeconds > 0) {
+                    document.getElementById('printHours').value = Math.floor(extractedSeconds / 3600);
+                    document.getElementById('printMinutes').value = Math.round((extractedSeconds % 3600) / 60);
+                }
+                calculateAll();
+                showToast(`G-Code "${file.name}" importado com sucesso!`, 'success');
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // --- 9. GITHUB PAGES EXPORT, WHATSAPP & PRINT ---
+        function downloadIndexHtml() {
+            const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Arquivo index.html baixado! Pronto para uso.', 'success');
+        }
+
+        function copyFullHtmlCode() {
+            const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            copyToClipboard(fullHtml).then(() => {
+                showToast('Código HTML completo copiado para a área de transferência!', 'success');
+            }).catch(() => {
+                showToast('Falha ao copiar automaticamente.', 'warning');
+            });
+        }
+
+        function copyWhatsAppQuote() {
+            const r = lastCalc;
+            const timeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
+            let msg = `🧊 *ORÇAMENTO IMPRESSÃO 3D — CUBE FORGE*\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `📦 *Peça:* ${r.pieceName}\n`;
+            msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
+            msg += `⚖️ *Peso Total:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
+            msg += `💰 *Valor Unitário:* *${formatBRL(r.unitSellingPrice)}*\n`;
+            if (r.qty > 1) {
+                msg += `💎 *Valor Total do Lote (${r.qty} un):* *${formatBRL(r.batchSellingPrice)}*\n`;
+            }
+            msg += `🏷️ *Atacado (+10 un):* ${formatBRL(r.unitWholesalePrice)}/un\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `_Impressão de alta precisão em Anycubic Kobra 4 Combo_`;
+
+            copyToClipboard(msg).then(() => {
+                showToast('Orçamento formatado copiado! Só colar no WhatsApp.', 'success');
+            });
+        }
+
+        function printQuotation() {
+            window.print();
+        }
+
+        async function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    console.warn('Clipboard API failed, falling back to execCommand', err);
+                }
+            }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            let success = false;
+            try {
+                success = document.execCommand('copy');
+            } catch (e) {
+                console.error(e);
+            }
+            document.body.removeChild(ta);
+            return success;
+        }
+
+        // --- 10. SAVED PRESETS (LOCALSTORAGE) ---
+        const STORAGE_KEY = 'cube_forge_3d_presets_v2';
+
+        function getSavedPresets() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function updateSavedCountBadge() {
+            const count = getSavedPresets().length;
+            document.getElementById('saved-count-badge').textContent = count;
+        }
+
+        function saveCurrentPreset() {
+            const list = getSavedPresets();
+            const item = {
+                id: Date.now(),
+                pieceName: document.getElementById('pieceName').value || 'Peça Sem Nome',
+                batchQty: document.getElementById('batchQty').value,
+                weightGrams: document.getElementById('weightGrams').value,
+                purgeGrams: document.getElementById('purgeGrams').value,
+                printHours: document.getElementById('printHours').value,
+                printMinutes: document.getElementById('printMinutes').value,
+                filamentPriceKg: document.getElementById('filamentPriceKg').value,
+                failureRate: document.getElementById('failureRate').value,
+                pricingStrategy: state.pricingStrategy,
+                markupVal: document.getElementById('markupSlider').value,
+                targetHourlyProfit: document.getElementById('targetHourlyProfit').value,
+                targetMarginPct: document.getElementById('targetMarginPct').value,
+                channelId: state.channelId,
+                quickAddons: state.quickAddons,
+                customExtras: state.customExtras,
+                unitPriceFormatted: formatBRL(lastCalc.unitSellingPrice),
+                dateStr: new Date().toLocaleDateString('pt-BR')
+            };
+            list.unshift(item);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 30)));
+            updateSavedCountBadge();
+            renderSavedPresets();
+            showToast(`Orçamento "${item.pieceName}" salvo com sucesso!`, 'success');
+        }
+
+        function loadPreset(id) {
+            const p = getSavedPresets().find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('pieceName').value = p.pieceName || '';
+            document.getElementById('batchQty').value = p.batchQty || 1;
+            document.getElementById('weightGrams').value = p.weightGrams || 0;
+            document.getElementById('purgeGrams').value = p.purgeGrams || 0;
+            document.getElementById('printHours').value = p.printHours || 0;
+            document.getElementById('printMinutes').value = p.printMinutes || 0;
+            document.getElementById('filamentPriceKg').value = p.filamentPriceKg || 80;
+            if (p.failureRate !== undefined) document.getElementById('failureRate').value = p.failureRate;
+
+            if (p.pricingStrategy) selectPricingStrategy(p.pricingStrategy);
+            if (p.markupVal) selectMarkupPill(parseFloat(p.markupVal));
+            if (p.targetHourlyProfit) document.getElementById('targetHourlyProfit').value = p.targetHourlyProfit;
+            if (p.targetMarginPct) document.getElementById('targetMarginPct').value = p.targetMarginPct;
+
+            if (p.quickAddons) state.quickAddons = p.quickAddons;
+            if (p.customExtras) state.customExtras = p.customExtras;
+
+            renderQuickAddons();
+            renderCustomExtras();
+            calculateAll();
+            closeModal('presets-modal');
+            showToast(`Orçamento "${p.pieceName}" restaurado!`, 'info');
+        }
+
+        function deletePreset(id) {
+            const list = getSavedPresets().filter(x => x.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+            updateSavedCountBadge();
+            renderSavedPresets();
+            showToast('Orçamento excluído.', 'warning');
+        }
+
+        function renderSavedPresets() {
+            const container = document.getElementById('saved-presets-list');
+            const list = getSavedPresets();
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-xs text-zinc-500 text-center py-8">Nenhum orçamento salvo ainda.</p>`;
+                return;
+            }
+            container.innerHTML = list.map(p => `
+                <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-zinc-900 border border-zinc-800">
+                    <div class="min-w-0 flex-1 cursor-pointer" onclick="loadPreset(${p.id})">
+                        <div class="text-xs font-bold text-white truncate">${escapeHtml(p.pieceName)}</div>
+                        <div class="text-[11px] font-mono text-zinc-400">${p.weightGrams}g • ${p.printHours}h${p.printMinutes}m • <strong class="text-emerald-400">${p.unitPriceFormatted}</strong></div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="loadPreset(${p.id})" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold">Abrir</button>
+                        <button type="button" onclick="deletePreset(${p.id})" class="p-1.5 text-zinc-500 hover:text-rose-400" aria-label="Excluir">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- 11. MODALS & UTILITIES ---
+        function openGithubModal() {
+            const m = document.getElementById('github-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function openPresetsModal() {
+            renderSavedPresets();
+            const m = document.getElementById('presets-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function formatBRL(val) {
+            return (isNaN(val) ? 0 : val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            let bg = 'bg-emerald-950/95 border-emerald-500/60 text-emerald-200';
+            let dot = 'bg-emerald-400';
+
+            if (type === 'info') {
+                bg = 'bg-cyan-950/95 border-cyan-500/60 text-cyan-200';
+                dot = 'bg-cyan-400';
+            } else if (type === 'warning') {
+                bg = 'bg-amber-950/95 border-amber-500/60 text-amber-200';
+                dot = 'bg-amber-400';
+            }
+
+            el.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-2xl text-xs font-semibold flex items-center gap-2 transition-all duration-300 ${bg}`;
+            el.innerHTML = `<span class="w-2 h-2 rounded-full ${dot} shrink-0"></span><span>${escapeHtml(msg)}</span>`;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            }, 3200);
+        }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderQuickAddons();
+            renderCustomExtras();
+            updateSavedCountBadge();
+            calculateAll();
+        });
+    </script>
+</body>
+</html>
