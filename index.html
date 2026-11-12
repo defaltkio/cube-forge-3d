@@ -233,6 +233,11 @@
                     <span class="hidden lg:inline">Imprimir / PDF</span>
                 </button>
 
+                <button type="button" onclick="confirmResetAll()" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-rose-950/40 text-zinc-300 hover:text-rose-400 border border-zinc-700 hover:border-rose-500/40 transition flex items-center gap-1.5 text-xs font-semibold" title="Limpar todos os campos e resetar para o padrão">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 text-rose-400"></i>
+                    <span class="hidden sm:inline">Resetar</span>
+                </button>
+
                 <button type="button" onclick="openGithubModal()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition flex items-center gap-1.5 active:scale-95">
                     <i data-lucide="github" class="w-4 h-4 stroke-[2.2]"></i>
                     <span class="hidden sm:inline">Repositório & Exportar</span>
@@ -248,8 +253,21 @@
         <!-- LEFT COLUMN: 7 COLS ON DESKTOP (INPUTS & MACHINE X-RAY) -->
         <div class="lg:col-span-7 space-y-6">
 
-            <!-- CARD 1: PROJETO, FATIADOR & FILAMENTO -->
-            <section class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl">
+            <!-- TABS SELECTOR: SINGLE PART VS MULTI-PARTS PROJECT -->
+            <div class="flex items-center gap-2 p-1.5 rounded-2xl bg-surface border border-zinc-800 shadow-xl no-print">
+                <button type="button" id="tab-btn-single" onclick="switchCalculatorTab('single')" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition duration-200 bg-emerald-500 text-zinc-950 shadow-md">
+                    <i data-lucide="box" class="w-4 h-4 stroke-[2.2]"></i>
+                    <span>Peça Única / Lote</span>
+                </button>
+                <button type="button" id="tab-btn-multi" onclick="switchCalculatorTab('multi')" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/60">
+                    <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Projeto Multi-Peças / Placas</span>
+                    <span id="multi-plates-count-badge" class="px-2 py-0.5 rounded-full bg-zinc-800 text-[10px] font-mono font-bold text-zinc-300">0</span>
+                </button>
+            </div>
+
+            <!-- CARD 1: PROJETO, FATIADOR & FILAMENTO (PEÇA ÚNICA) -->
+            <section id="card-single-part" class="bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-zinc-800/80">
                     <div class="flex items-center gap-2.5">
                         <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
@@ -373,6 +391,78 @@
                             <input type="number" id="printMinutes" value="" placeholder="0" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
                             <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CARD 1B: PROJETO MULTI-PEÇAS / PLACAS (CONDICIONAL) -->
+            <section id="card-multi-parts" class="hidden bg-surface rounded-2xl border border-zinc-800/90 p-5 sm:p-6 shadow-xl space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+                            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display font-bold text-base sm:text-lg text-white">1. Projeto Multi-Peças / Placas</h2>
+                            <p class="text-xs text-zinc-400">Adicione várias placas e impressões para compor um único projeto</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-mono text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20">Cálculo Consolidado</span>
+                </div>
+
+                <!-- Multi Project Name & Batch Sets -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="sm:col-span-3">
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="multiProjectName">Nome do Projeto Geral</label>
+                        <input type="text" id="multiProjectName" value="" placeholder="Ex: Armadura Cosplay / Diorama Castelo / Robô Hexápode" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-purple-400 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="multiBatchQty">Qtd. de Kits</label>
+                        <div class="relative">
+                            <input type="number" id="multiBatchQty" value="1" min="1" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700/80 focus:border-purple-400 rounded-xl pl-3.5 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none transition">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">kits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Multi Failure Rate -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-zinc-900/80 border border-zinc-800">
+                    <div>
+                        <span class="text-xs font-semibold text-zinc-300 block">Taxa de Segurança Geral p/ Falhas do Projeto</span>
+                        <span class="text-[11px] text-zinc-500">Aplica margem de segurança contra descolamentos e falhas em todas as placas</span>
+                    </div>
+                    <div class="relative w-28 shrink-0">
+                        <input type="number" id="multiFailureRate" value="10" min="0" max="100" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-xl pl-3 pr-8 py-1.5 text-xs font-mono font-bold text-amber-400 outline-none">
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">%</span>
+                    </div>
+                </div>
+
+                <!-- Plates Container -->
+                <div class="space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-zinc-200 uppercase tracking-wider font-mono">Placas / Impressões Individuais</span>
+                        <button type="button" onclick="addNewPlate()" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-purple-600/20 transition active:scale-95">
+                            <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
+                            <span>Adicionar Placa</span>
+                        </button>
+                    </div>
+
+                    <div id="plates-container" class="space-y-3">
+                        <!-- Dynamically rendered plates -->
+                    </div>
+                </div>
+
+                <!-- Multi-parts Totals Quick Strip -->
+                <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-purple-300"><strong id="multi-summary-plates-count">0</strong> placas</span>
+                        <span class="text-zinc-600">•</span>
+                        <span class="font-mono text-zinc-300"><strong id="multi-summary-total-weight">0g</strong> filamento</span>
+                        <span class="text-zinc-600">•</span>
+                        <span class="font-mono text-zinc-300"><strong id="multi-summary-total-time">0h</strong> impressão</span>
+                    </div>
+                    <div class="font-mono text-zinc-300">
+                        Custo Fabril Placas: <strong id="multi-summary-direct-cost" class="text-purple-300 font-bold text-sm">R$ 0,00</strong>
                     </div>
                 </div>
             </section>
@@ -827,7 +917,7 @@
 
                 <!-- Hero Price Display -->
                 <div class="mb-5 pb-4 border-b border-zinc-800/90">
-                    <div class="text-xs text-zinc-400 mb-1">Valor Unitário ao Cliente</div>
+                    <div class="text-xs text-zinc-400 mb-1" id="res-price-label">Valor Unitário ao Cliente</div>
                     <div class="flex items-baseline justify-between gap-2 flex-wrap">
                         <span id="res-unit-price" class="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">R$ 0,00</span>
                         <span id="res-effective-markup" class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">3.0x custo</span>
@@ -860,8 +950,8 @@
                 <!-- Stacked Composition Bar -->
                 <div class="mb-5">
                     <div class="flex items-center justify-between text-xs mb-1.5">
-                        <span class="font-semibold text-zinc-300">Raio-X de Cada Peça Vendida</span>
-                        <span class="text-[11px] font-mono text-zinc-400" id="lbl-total-weight-time">110g • 3h30m</span>
+                        <span class="font-semibold text-zinc-300" id="res-composition-label">Raio-X de Cada Peça Vendida</span>
+                        <span class="text-[11px] font-mono text-zinc-400" id="lbl-total-weight-time">0g • 0h</span>
                     </div>
                     <div class="w-full h-3.5 rounded-full bg-zinc-900 overflow-hidden flex p-0.5 border border-zinc-800 mb-3">
                         <div id="bar-filament" style="width: 20%" class="bg-emerald-400 h-full transition-all duration-300 first:rounded-l-full" title="Filamento + Purga"></div>
@@ -869,6 +959,18 @@
                         <div id="bar-extras" style="width: 15%" class="bg-purple-400 h-full transition-all duration-300" title="Embalagem + Acabamento"></div>
                         <div id="bar-fees" style="width: 10%" class="bg-amber-400 h-full transition-all duration-300" title="Taxas e Impostos"></div>
                         <div id="bar-profit" style="width: 40%" class="bg-emerald-600 h-full transition-all duration-300 last:rounded-r-full" title="Lucro Líquido"></div>
+                    </div>
+
+                    <!-- Multi-Plates Receipt Breakdown (shown in multi mode) -->
+                    <div id="multi-plates-receipt-box" class="hidden mb-3 p-3 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-bold text-purple-400 font-mono uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                Placas do Projeto
+                            </span>
+                            <span id="multi-receipt-plates-badge" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">0 placas</span>
+                        </div>
+                        <div id="multi-plates-receipt-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-xs"></div>
                     </div>
 
                     <!-- Itemized Ledger -->
@@ -1045,10 +1147,32 @@
         </div>
     </div>
 
+    <!-- MODAL: CONFIRMAÇÃO DE RESET -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 no-print" role="dialog" aria-modal="true">
+        <div class="bg-surface border border-zinc-700 rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-center">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 mx-auto mb-3">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-display text-base font-bold text-white mb-1">Redefinir Calculadora?</h3>
+            <p class="text-xs text-zinc-400 mb-5 leading-relaxed">
+                Isso limpará todos os campos preenchidos, removerá as placas e limpará a memória salva no navegador.
+            </p>
+            <div class="grid grid-cols-2 gap-2.5">
+                <button type="button" onclick="closeModal('reset-modal')" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition">
+                    Cancelar
+                </button>
+                <button type="button" onclick="executeResetAll()" class="py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/20 transition">
+                    Sim, Resetar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- APPLICATION SCRIPT -->
     <script>
         // --- 1. APPLICATION STATE ---
         const state = {
+            activeTab: 'single', // 'single' | 'multi'
             materialId: 'pla',
             machineMode: 'real', // 'real' | 'fixed'
             powerPresetId: 'pwr-220',
@@ -1061,10 +1185,309 @@
                 { id: 'keyring', name: 'Argola de Chaveiro / Corrente', cost: 0.80, active: false },
                 { id: 'magnets', name: 'Ímãs de Neodímio / Cola', cost: 1.80, active: false }
             ],
-            customExtras: []
+            customExtras: [],
+            plates: [
+                { id: 'plate_1', name: 'Placa #1', materialKey: 'pla', filamentPriceKg: 80, weightGrams: 0, purgeGrams: 0, hours: 0, minutes: 0 }
+            ]
         };
 
         let lastCalc = {};
+
+        // --- TAB SWITCHER (PEÇA ÚNICA VS PROJETO MULTI-PEÇAS) ---
+        function switchCalculatorTab(tab) {
+            state.activeTab = tab;
+            const isSingle = tab === 'single';
+            const btnSingle = document.getElementById('tab-btn-single');
+            const btnMulti = document.getElementById('tab-btn-multi');
+
+            if (btnSingle && btnMulti) {
+                if (isSingle) {
+                    btnSingle.className = "flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition duration-200 bg-emerald-500 text-zinc-950 shadow-md";
+                    btnMulti.className = "flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/60";
+                } else {
+                    btnMulti.className = "flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition duration-200 bg-purple-600 text-white shadow-md shadow-purple-600/30";
+                    btnSingle.className = "flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/60";
+                }
+            }
+
+            const cardSingle = document.getElementById('card-single-part');
+            const cardMulti = document.getElementById('card-multi-parts');
+            if (cardSingle && cardMulti) {
+                cardSingle.classList.toggle('hidden', !isSingle);
+                cardMulti.classList.toggle('hidden', isSingle);
+            }
+
+            const receiptBox = document.getElementById('multi-plates-receipt-box');
+            if (receiptBox) {
+                receiptBox.classList.toggle('hidden', isSingle);
+            }
+
+            calculateAll();
+        }
+
+        // --- MULTI-PARTS PLATES MANAGEMENT ---
+        function renderPlates() {
+            const container = document.getElementById('plates-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const badge = document.getElementById('multi-plates-count-badge');
+            if (badge) badge.textContent = state.plates.length;
+
+            if (state.plates.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 p-4 rounded-xl border border-dashed border-zinc-800 text-zinc-500 text-xs">
+                        Nenhuma placa adicionada ainda. Clique em "+ Adicionar Placa" acima para começar!
+                    </div>
+                `;
+                return;
+            }
+
+            state.plates.forEach((plate, index) => {
+                const div = document.createElement('div');
+                div.className = "p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3 relative transition hover:border-zinc-700";
+                div.id = `plate-card-${plate.id}`;
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                            <span class="px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-purple-300 font-mono text-[11px] font-bold">#${index + 1}</span>
+                            <input type="text" value="${escapeHtml(plate.name || '')}" placeholder="Nome da Placa (ex: Base, Asas, Suportes)"
+                                oninput="updatePlateField('${plate.id}', 'name', this.value)"
+                                class="flex-1 bg-elevated border border-zinc-700/80 focus:border-purple-400 rounded-lg px-2.5 py-1 text-xs text-white outline-none transition">
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <label class="cursor-pointer px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 text-[11px] font-semibold flex items-center gap-1 transition" title="Importar arquivo .gcode para esta placa">
+                                <i data-lucide="file-code-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span class="hidden sm:inline">GCODE</span>
+                                <input type="file" accept=".gcode,.gco,.g" class="hidden" onchange="handlePlateGcodeUpload(event, '${plate.id}')">
+                            </label>
+                            <button type="button" onclick="duplicatePlate('${plate.id}')" class="p-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border border-zinc-700 transition" title="Duplicar esta placa">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="removePlate('${plate.id}')" class="p-1 rounded-lg bg-zinc-800 hover:bg-rose-950/40 text-zinc-400 hover:text-rose-400 border border-zinc-700 transition" title="Excluir placa">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] text-zinc-400 mb-1">Filamento</label>
+                            <select onchange="updatePlateMaterial('${plate.id}', this.value)" class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs text-zinc-200 outline-none">
+                                <option value="pla" ${plate.materialKey === 'pla' ? 'selected' : ''}>PLA (R$ 80/kg)</option>
+                                <option value="petg" ${plate.materialKey === 'petg' ? 'selected' : ''}>PETG (R$ 85/kg)</option>
+                                <option value="silk" ${plate.materialKey === 'silk' ? 'selected' : ''}>Silk/Duo (R$ 110/kg)</option>
+                                <option value="abs" ${plate.materialKey === 'abs' ? 'selected' : ''}>ABS/TPU (R$ 95/kg)</option>
+                                <option value="custom" ${plate.materialKey === 'custom' ? 'selected' : ''}>Outro Preço</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-zinc-400 mb-1">Preço/Kg (R$)</label>
+                            <input type="number" value="${plate.filamentPriceKg || 80}" min="1" step="1"
+                                oninput="updatePlateField('${plate.id}', 'filamentPriceKg', parseFloat(this.value) || 0)"
+                                class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-emerald-400 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-zinc-300 mb-1 font-semibold">Peso Peça (g)</label>
+                            <input type="number" value="${plate.weightGrams ? plate.weightGrams : ''}" placeholder="0" min="0" step="0.5"
+                                oninput="updatePlateField('${plate.id}', 'weightGrams', parseFloat(this.value) || 0)"
+                                class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-zinc-400 mb-1">Purga/Torre (g)</label>
+                            <input type="number" value="${plate.purgeGrams ? plate.purgeGrams : ''}" placeholder="0" min="0" step="0.5"
+                                oninput="updatePlateField('${plate.id}', 'purgeGrams', parseFloat(this.value) || 0)"
+                                class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-amber-300 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+                        <div>
+                            <label class="block text-[10px] text-zinc-400 mb-1">Tempo (Horas)</label>
+                            <input type="number" value="${plate.hours ? plate.hours : ''}" placeholder="0" min="0" step="1"
+                                oninput="updatePlateField('${plate.id}', 'hours', parseInt(this.value) || 0)"
+                                class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-zinc-400 mb-1">Tempo (Min)</label>
+                            <input type="number" value="${plate.minutes ? plate.minutes : ''}" placeholder="0" min="0" max="59" step="1"
+                                oninput="updatePlateField('${plate.id}', 'minutes', parseInt(this.value) || 0)"
+                                class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-white outline-none">
+                        </div>
+
+                        <div class="col-span-2 sm:col-span-1 flex flex-col justify-end">
+                            <div class="text-[10px] text-zinc-400 mb-1">Subtotal Placa</div>
+                            <div class="px-2.5 py-1.5 rounded-lg bg-zinc-950/80 border border-zinc-800 text-xs font-mono font-bold text-purple-300 flex items-center justify-between">
+                                <span class="text-zinc-500 font-normal">Custo:</span>
+                                <span id="plate-subtotal-${plate.id}">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        function addNewPlate(data = null) {
+            const count = state.plates.length + 1;
+            const id = 'plate_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+            const newPlate = data || {
+                id,
+                name: `Placa #${count}`,
+                materialKey: 'pla',
+                filamentPriceKg: 80,
+                weightGrams: 0,
+                purgeGrams: 0,
+                hours: 0,
+                minutes: 0
+            };
+            state.plates.push(newPlate);
+            renderPlates();
+            calculateAll();
+            showToast(`Placa #${state.plates.length} adicionada!`, 'success');
+        }
+
+        function removePlate(id) {
+            if (state.plates.length <= 1) {
+                showToast('O projeto precisa ter pelo menos 1 placa.', 'warning');
+                return;
+            }
+            state.plates = state.plates.filter(p => p.id !== id);
+            renderPlates();
+            calculateAll();
+            showToast('Placa removida.', 'warning');
+        }
+
+        function duplicatePlate(id) {
+            const plate = state.plates.find(p => p.id === id);
+            if (!plate) return;
+            const copy = {
+                ...plate,
+                id: 'plate_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                name: `${plate.name} (Cópia)`
+            };
+            state.plates.push(copy);
+            renderPlates();
+            calculateAll();
+            showToast('Placa duplicada com sucesso!', 'success');
+        }
+
+        function updatePlateField(id, field, val) {
+            const plate = state.plates.find(p => p.id === id);
+            if (plate) {
+                plate[field] = val;
+                calculateAll();
+            }
+        }
+
+        function updatePlateMaterial(id, matKey) {
+            const plate = state.plates.find(p => p.id === id);
+            if (!plate) return;
+            plate.materialKey = matKey;
+            const prices = { pla: 80, petg: 85, silk: 110, abs: 95 };
+            if (prices[matKey]) {
+                plate.filamentPriceKg = prices[matKey];
+            }
+            renderPlates();
+            calculateAll();
+        }
+
+        function handlePlateGcodeUpload(event, plateId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const sample = content.slice(0, 30000) + '\n' + content.slice(-30000);
+
+                let extractedWeight = null;
+                let extractedSeconds = null;
+
+                const weightRegexes = [
+                    /;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[:=]\s*([0-9.]+)/i,
+                    /;\s*(?:total\s+)?filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.]+)/i,
+                    /;\s*(?:total\s+)?filament\s+used\s*[:=]\s*([0-9.]+)\s*g/i,
+                    /;\s*Filament\s+weight\s*[:=]\s*([0-9.]+)\s*g/i
+                ];
+
+                for (const rx of weightRegexes) {
+                    const m = sample.match(rx);
+                    if (m && m[1]) {
+                        extractedWeight = parseFloat(m[1]);
+                        break;
+                    }
+                }
+
+                if (extractedWeight === null) {
+                    const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.]+)/i) ||
+                                     sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.]+)/i);
+                    if (lenMatch && lenMatch[1]) {
+                        const meters = lenMatch[0].includes('[mm]') ? parseFloat(lenMatch[1]) / 1000 : parseFloat(lenMatch[1]);
+                        extractedWeight = meters * 3.0;
+                    }
+                }
+
+                const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
+                const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
+
+                if (slicerTime && (slicerTime[1] || slicerTime[2] || slicerTime[3])) {
+                    const d = parseInt(slicerTime[1] || 0);
+                    const h = parseInt(slicerTime[2] || 0);
+                    const m = parseInt(slicerTime[3] || 0);
+                    extractedSeconds = (d * 86400) + (h * 3600) + (m * 60);
+                } else if (curaTime && curaTime[1]) {
+                    extractedSeconds = parseInt(curaTime[1]);
+                }
+
+                const plate = state.plates.find(p => p.id === plateId);
+                if (plate) {
+                    plate.name = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
+                    if (extractedWeight !== null && !isNaN(extractedWeight)) {
+                        plate.weightGrams = parseFloat(extractedWeight.toFixed(1));
+                        plate.purgeGrams = 0;
+                    }
+                    if (extractedSeconds !== null && extractedSeconds > 0) {
+                        plate.hours = Math.floor(extractedSeconds / 3600);
+                        plate.minutes = Math.round((extractedSeconds % 3600) / 60);
+                    }
+                    renderPlates();
+                    calculateAll();
+                    showToast(`G-Code importado para a placa!`, 'success');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function renderReceiptPlatesList() {
+            const container = document.getElementById('multi-plates-receipt-list');
+            const badge = document.getElementById('multi-receipt-plates-badge');
+            if (!container) return;
+            if (badge) badge.textContent = `${state.plates.length} placas`;
+
+            if (state.plates.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-zinc-500 italic">Nenhuma placa adicionada ainda.</p>`;
+                return;
+            }
+
+            container.innerHTML = state.plates.map((p, idx) => {
+                const grams = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
+                const time = `${p.hours || 0}h${p.minutes ? p.minutes + 'm' : ''}`;
+                return `
+                    <div class="flex items-center justify-between py-1 border-b border-zinc-800/50 last:border-0">
+                        <span class="text-zinc-300 truncate max-w-[170px]">#${idx + 1} ${escapeHtml(p.name || 'Placa')}</span>
+                        <span class="font-mono text-purple-300 shrink-0">${grams}g • ${time}</span>
+                    </div>
+                `;
+            }).join('');
+        }
 
         // --- 2. HELPER TO UPDATE ACTIVE GROUP BUTTONS ---
         function setActiveButtonInGroup(buttonIds, activeId) {
@@ -1085,6 +1508,8 @@
             document.getElementById('filamentPriceKg').value = price.toFixed(2);
             document.getElementById('active-material-label').textContent = `Selecionado: ${label}`;
             setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], `mat-${matKey}`);
+            calculateAll();
+        }
             calculateAll();
         }
 
@@ -1276,20 +1701,16 @@
 
         // --- 7. CORE CALCULATION ENGINE ---
         function calculateAll() {
-            const pieceName = document.getElementById('pieceName').value.trim() || 'Peça Impressa 3D';
-            const qty = Math.max(1, parseInt(document.getElementById('batchQty').value) || 1);
-            const partGrams = Math.max(0, parseFloat(document.getElementById('weightGrams').value) || 0);
-            const purgeGrams = Math.max(0, parseFloat(document.getElementById('purgeGrams').value) || 0);
-            const totalGramsBatch = partGrams + purgeGrams;
+            let pieceName = 'Peça Impressa 3D';
+            let qty = 1;
+            let filamentCostBatch = 0;
+            let machineCostBatch = 0;
+            let totalGramsBatch = 0;
+            let totalPrintHours = 0;
+            let hours = 0;
+            let minutes = 0;
 
-            const hours = Math.max(0, parseFloat(document.getElementById('printHours').value) || 0);
-            const minutes = Math.max(0, parseFloat(document.getElementById('printMinutes').value) || 0);
-            const totalPrintHours = hours + (minutes / 60);
-
-            const filamentPriceKg = Math.max(0, parseFloat(document.getElementById('filamentPriceKg').value) || 0);
-            const failureRate = Math.max(0, parseFloat(document.getElementById('failureRate').value) || 0) / 100;
-
-            // Machine Hourly Breakdown
+            // Machine Hourly Breakdown (Shared)
             let energyHourly = 0;
             let depreciationHourly = 0;
             let maintenanceHourly = 0;
@@ -1326,12 +1747,88 @@
 
             document.getElementById('total-machine-hourly-badge').textContent = `${formatBRL(totalMachineHourly)} / h`;
 
-            // Batch Direct Costs (with failure rate risk factor)
-            const rawFilamentCostBatch = (totalGramsBatch / 1000) * filamentPriceKg;
-            const rawMachineCostBatch = totalPrintHours * totalMachineHourly;
+            if (state.activeTab === 'single') {
+                pieceName = document.getElementById('pieceName').value.trim() || 'Peça Impressa 3D';
+                qty = Math.max(1, parseInt(document.getElementById('batchQty').value) || 1);
+                const partGrams = Math.max(0, parseFloat(document.getElementById('weightGrams').value) || 0);
+                const purgeGrams = Math.max(0, parseFloat(document.getElementById('purgeGrams').value) || 0);
+                totalGramsBatch = partGrams + purgeGrams;
 
-            const filamentCostBatch = rawFilamentCostBatch * (1 + failureRate);
-            const machineCostBatch = rawMachineCostBatch * (1 + failureRate);
+                hours = Math.max(0, parseFloat(document.getElementById('printHours').value) || 0);
+                minutes = Math.max(0, parseFloat(document.getElementById('printMinutes').value) || 0);
+                totalPrintHours = hours + (minutes / 60);
+
+                const filamentPriceKg = Math.max(0, parseFloat(document.getElementById('filamentPriceKg').value) || 0);
+                const failureRate = Math.max(0, parseFloat(document.getElementById('failureRate').value) || 0) / 100;
+
+                const rawFilamentCostBatch = (totalGramsBatch / 1000) * filamentPriceKg;
+                const rawMachineCostBatch = totalPrintHours * totalMachineHourly;
+
+                filamentCostBatch = rawFilamentCostBatch * (1 + failureRate);
+                machineCostBatch = rawMachineCostBatch * (1 + failureRate);
+
+                document.getElementById('batch-badge').textContent = `Lote: ${qty} un`;
+                document.getElementById('res-price-label').textContent = 'Valor Unitário ao Cliente';
+                document.getElementById('res-composition-label').textContent = 'Raio-X de Cada Peça Vendida';
+                document.getElementById('lbl-total-weight-time').textContent = `${totalGramsBatch}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
+            } else {
+                // Multi-parts mode
+                pieceName = (document.getElementById('multiProjectName') && document.getElementById('multiProjectName').value.trim()) || 'Projeto Multi-Peças 3D';
+                qty = Math.max(1, parseInt(document.getElementById('multiBatchQty').value) || 1);
+                const multiFailureRate = Math.max(0, parseFloat(document.getElementById('multiFailureRate').value) || 0) / 100;
+
+                let kitGrams = 0;
+                let kitHours = 0;
+                let kitFilamentCost = 0;
+                let kitMachineCost = 0;
+
+                state.plates.forEach(p => {
+                    const pGrams = Math.max(0, (parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0));
+                    const pHours = Math.max(0, (parseInt(p.hours) || 0) + ((parseInt(p.minutes) || 0) / 60));
+                    const pPriceKg = Math.max(0, parseFloat(p.filamentPriceKg) || 80);
+
+                    const pFilament = ((pGrams / 1000) * pPriceKg) * (1 + multiFailureRate);
+                    const pMachine = (pHours * totalMachineHourly) * (1 + multiFailureRate);
+                    const pSubtotal = pFilament + pMachine;
+
+                    kitGrams += pGrams;
+                    kitHours += pHours;
+                    kitFilamentCost += pFilament;
+                    kitMachineCost += pMachine;
+
+                    const badgeEl = document.getElementById(`plate-subtotal-${p.id}`);
+                    if (badgeEl) {
+                        badgeEl.textContent = formatBRL(pSubtotal);
+                    }
+                });
+
+                filamentCostBatch = kitFilamentCost * qty;
+                machineCostBatch = kitMachineCost * qty;
+                totalGramsBatch = kitGrams * qty;
+                totalPrintHours = kitHours * qty;
+                hours = Math.floor(kitHours);
+                minutes = Math.round((kitHours % 1) * 60);
+
+                // Update multi summary inside card 1B
+                const countBadge = document.getElementById('multi-plates-count-badge');
+                if (countBadge) countBadge.textContent = state.plates.length;
+                const sumPlatesCount = document.getElementById('multi-summary-plates-count');
+                if (sumPlatesCount) sumPlatesCount.textContent = state.plates.length;
+                const sumTotalWeight = document.getElementById('multi-summary-total-weight');
+                if (sumTotalWeight) sumTotalWeight.textContent = `${kitGrams.toFixed(1)}g`;
+                const sumTotalTime = document.getElementById('multi-summary-total-time');
+                if (sumTotalTime) sumTotalTime.textContent = `${hours}h ${minutes}m`;
+                const sumDirectCost = document.getElementById('multi-summary-direct-cost');
+                if (sumDirectCost) sumDirectCost.textContent = formatBRL(kitFilamentCost + kitMachineCost);
+
+                // Update receipt elements for multi mode
+                document.getElementById('batch-badge').textContent = `Projeto: ${state.plates.length} placas (${qty} ${qty > 1 ? 'kits' : 'kit'})`;
+                document.getElementById('res-price-label').textContent = qty > 1 ? 'Valor por Kit Completo' : 'Valor Total do Projeto';
+                document.getElementById('res-composition-label').textContent = 'Raio-X do Projeto Completo';
+                document.getElementById('lbl-total-weight-time').textContent = `${kitGrams.toFixed(0)}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''} (${state.plates.length} pl)`;
+
+                renderReceiptPlatesList();
+            }
 
             // Packaging, Finishing & Manual Labor (per unit)
             let addonsPerUnit = 0;
@@ -1392,7 +1889,7 @@
             const unitWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / (1 - totalFeePct);
 
             lastCalc = {
-                pieceName, qty, totalGramsBatch, hours, minutes,
+                pieceName, qty, totalGramsBatch, hours, minutes, totalPrintHours,
                 unitCost, totalBatchCost, unitSellingPrice, batchSellingPrice,
                 unitNetProfit, netMarginPct, effectiveMarkup, profitPerPrintHour,
                 unitWholesalePrice, totalMachineHourly
@@ -1403,7 +1900,6 @@
             document.getElementById('mobile-unit-price').textContent = formatBRL(unitSellingPrice);
             document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x ${unitCost > 0 ? 'custo' : 'markup'}`;
 
-            document.getElementById('batch-badge').textContent = `Lote: ${qty} un`;
             document.getElementById('res-batch-qty').textContent = qty;
             document.getElementById('res-batch-price').textContent = formatBRL(batchSellingPrice);
 
@@ -1424,13 +1920,15 @@
             document.getElementById('mobile-profit-badge').textContent = `+${formatBRL(unitNetProfit)} líq.`;
 
             document.getElementById('res-wholesale-price').textContent = formatBRL(unitWholesalePrice);
-            document.getElementById('lbl-total-weight-time').textContent = `${totalGramsBatch}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
 
             updateBarRow('filament', unitFilament, unitSellingPrice);
             updateBarRow('machine', unitMachine, unitSellingPrice);
             updateBarRow('extras', unitExtras, unitSellingPrice);
             updateBarRow('fees', unitFees, unitSellingPrice);
             updateBarRow('profit', Math.max(0, unitNetProfit), unitSellingPrice);
+
+            // Auto-save to LocalStorage
+            autoSaveState();
         }
 
         function updateBarRow(key, val, total) {
@@ -1448,13 +1946,11 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const content = e.target.result;
-                // Read start and end slices where slicer comments usually sit
                 const sample = content.slice(0, 30000) + '\n' + content.slice(-30000);
 
                 let extractedWeight = null;
                 let extractedSeconds = null;
 
-                // Support Anycubic Slicer Next, OrcaSlicer, Bambu Studio, PrusaSlicer, Cura, Simplify3D
                 const weightRegexes = [
                     /;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[:=]\s*([0-9.]+)/i,
                     /;\s*(?:total\s+)?filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.]+)/i,
@@ -1470,17 +1966,15 @@
                     }
                 }
 
-                // Filament length in meters or mm if weight not explicitly found (approx 3g per meter of 1.75mm PLA)
                 if (extractedWeight === null) {
                     const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.]+)/i) ||
                                      sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.]+)/i);
                     if (lenMatch && lenMatch[1]) {
                         const meters = lenMatch[0].includes('[mm]') ? parseFloat(lenMatch[1]) / 1000 : parseFloat(lenMatch[1]);
-                        extractedWeight = meters * 3.0; // Standard 1.75mm PLA estimation (~3g/m)
+                        extractedWeight = meters * 3.0;
                     }
                 }
 
-                // Time regexes across various slicers
                 const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
                 const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
 
@@ -1493,17 +1987,51 @@
                     extractedSeconds = parseInt(curaTime[1]);
                 }
 
-                document.getElementById('pieceName').value = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
-                if (extractedWeight !== null && !isNaN(extractedWeight)) {
-                    document.getElementById('weightGrams').value = extractedWeight.toFixed(1);
-                    document.getElementById('purgeGrams').value = '0';
-                }
+                const parsedName = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
+                const weight = (extractedWeight !== null && !isNaN(extractedWeight)) ? parseFloat(extractedWeight.toFixed(1)) : 0;
+                let hours = 0;
+                let minutes = 0;
                 if (extractedSeconds !== null && extractedSeconds > 0) {
-                    document.getElementById('printHours').value = Math.floor(extractedSeconds / 3600);
-                    document.getElementById('printMinutes').value = Math.round((extractedSeconds % 3600) / 60);
+                    hours = Math.floor(extractedSeconds / 3600);
+                    minutes = Math.round((extractedSeconds % 3600) / 60);
                 }
-                calculateAll();
-                showToast(`G-Code "${file.name}" importado com sucesso!`, 'success');
+
+                if (state.activeTab === 'single') {
+                    document.getElementById('pieceName').value = parsedName;
+                    if (weight > 0) {
+                        document.getElementById('weightGrams').value = weight;
+                        document.getElementById('purgeGrams').value = '0';
+                    }
+                    if (hours > 0 || minutes > 0) {
+                        document.getElementById('printHours').value = hours;
+                        document.getElementById('printMinutes').value = minutes;
+                    }
+                    calculateAll();
+                    showToast(`G-Code "${file.name}" importado!`, 'success');
+                } else {
+                    const emptyPlate = state.plates.find(p => (!p.weightGrams || p.weightGrams === 0) && (!p.hours || p.hours === 0));
+                    if (emptyPlate) {
+                        emptyPlate.name = parsedName;
+                        emptyPlate.weightGrams = weight;
+                        emptyPlate.purgeGrams = 0;
+                        emptyPlate.hours = hours;
+                        emptyPlate.minutes = minutes;
+                    } else {
+                        state.plates.push({
+                            id: 'plate_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                            name: parsedName,
+                            materialKey: 'pla',
+                            filamentPriceKg: 80,
+                            weightGrams: weight,
+                            purgeGrams: 0,
+                            hours,
+                            minutes
+                        });
+                    }
+                    renderPlates();
+                    calculateAll();
+                    showToast(`Placa adicionada via G-Code "${file.name}"!`, 'success');
+                }
             };
             reader.readAsText(file);
             event.target.value = '';
@@ -1535,17 +2063,41 @@
 
         function copyWhatsAppQuote() {
             const r = lastCalc;
+            const isSingle = state.activeTab === 'single';
             const timeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
             let msg = `🧊 *ORÇAMENTO IMPRESSÃO 3D — CUBE FORGE*\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `📦 *Peça:* ${r.pieceName}\n`;
-            msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
-            msg += `⚖️ *Peso Total:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
-            msg += `💰 *Valor Unitário:* *${formatBRL(r.unitSellingPrice)}*\n`;
-            if (r.qty > 1) {
-                msg += `💎 *Valor Total do Lote (${r.qty} un):* *${formatBRL(r.batchSellingPrice)}*\n`;
+
+            if (isSingle) {
+                msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+                msg += `📦 *Peça:* ${r.pieceName}\n`;
+                msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
+                msg += `⚖️ *Peso Total:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
+                msg += `💰 *Valor Unitário:* *${formatBRL(r.unitSellingPrice)}*\n`;
+                if (r.qty > 1) {
+                    msg += `💎 *Valor Total do Lote (${r.qty} un):* *${formatBRL(r.batchSellingPrice)}*\n`;
+                }
+                msg += `🏷️ *Atacado (+10 un):* ${formatBRL(r.unitWholesalePrice)}/un\n`;
+            } else {
+                msg += `📁 *PROJETO MULTI-PEÇAS / PLACAS*\n`;
+                msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+                msg += `📦 *Projeto:* ${r.pieceName}\n`;
+                msg += `🔢 *Quantidade de Kits:* ${r.qty} ${r.qty > 1 ? 'kits' : 'kit'}\n`;
+                msg += `🧩 *Total de Placas por Kit:* ${state.plates.length} placas\n`;
+                const kitWeight = (r.totalGramsBatch / r.qty).toFixed(0);
+                msg += `⚖️ *Peso Total do Kit:* ${kitWeight}g | ⏱️ *Tempo de Impressão:* ${timeStr}\n\n`;
+                msg += `📋 *Detalhamento das Placas:*\n`;
+                state.plates.forEach((p, idx) => {
+                    const pTime = `${p.hours || 0}h${p.minutes ? ' ' + p.minutes + 'm' : ''}`;
+                    const pWeight = ((p.weightGrams || 0) + (p.purgeGrams || 0)).toFixed(0);
+                    msg += `  ${idx + 1}. *${p.name || 'Placa #' + (idx + 1)}*: ${pWeight}g • ${pTime}\n`;
+                });
+                msg += `\n💰 *Valor por Kit Completo:* *${formatBRL(r.unitSellingPrice)}*\n`;
+                if (r.qty > 1) {
+                    msg += `💎 *Valor Total (${r.qty} kits):* *${formatBRL(r.batchSellingPrice)}*\n`;
+                }
+                msg += `🏷️ *Atacado (+10 kits):* ${formatBRL(r.unitWholesalePrice)}/kit\n`;
             }
-            msg += `🏷️ *Atacado (+10 un):* ${formatBRL(r.unitWholesalePrice)}/un\n`;
+
             msg += `━━━━━━━━━━━━━━━━━━━━\n`;
             msg += `_Impressão de alta precisão em Anycubic Kobra 4 Combo_`;
 
@@ -1587,6 +2139,224 @@
 
         // --- 10. SAVED PRESETS (LOCALSTORAGE) ---
         const STORAGE_KEY = 'cube_forge_3d_presets_v2';
+        const AUTOSAVE_KEY = 'cube_forge_autosave_v3';
+
+        function autoSaveState() {
+            try {
+                const data = {
+                    activeTab: state.activeTab,
+                    // Single part
+                    pieceName: document.getElementById('pieceName')?.value || '',
+                    batchQty: document.getElementById('batchQty')?.value || '1',
+                    weightGrams: document.getElementById('weightGrams')?.value || '',
+                    purgeGrams: document.getElementById('purgeGrams')?.value || '',
+                    printHours: document.getElementById('printHours')?.value || '',
+                    printMinutes: document.getElementById('printMinutes')?.value || '',
+                    filamentPriceKg: document.getElementById('filamentPriceKg')?.value || '80.00',
+                    failureRate: document.getElementById('failureRate')?.value || '10',
+                    materialId: state.materialId,
+
+                    // Multi parts
+                    multiProjectName: document.getElementById('multiProjectName')?.value || '',
+                    multiBatchQty: document.getElementById('multiBatchQty')?.value || '1',
+                    multiFailureRate: document.getElementById('multiFailureRate')?.value || '10',
+                    plates: state.plates,
+
+                    // Machine
+                    machineMode: state.machineMode,
+                    powerPresetId: state.powerPresetId,
+                    kwhPresetId: state.kwhPresetId,
+                    printerWatts: document.getElementById('printerWatts')?.value || '220',
+                    kwhPrice: document.getElementById('kwhPrice')?.value || '1.11',
+                    printerValue: document.getElementById('printerValue')?.value || '3339',
+                    printerLifespan: document.getElementById('printerLifespan')?.value || '5000',
+                    maintenanceHourly: document.getElementById('maintenanceHourly')?.value || '0.25',
+                    fixedHourlyCost: document.getElementById('fixedHourlyCost')?.value || '0.85',
+
+                    // Extras & Labor
+                    quickAddons: state.quickAddons,
+                    customExtras: state.customExtras,
+                    laborMinutes: document.getElementById('laborMinutes')?.value || '',
+                    laborHourlyRate: document.getElementById('laborHourlyRate')?.value || '25.00',
+
+                    // Strategy & Channel
+                    pricingStrategy: state.pricingStrategy,
+                    markupVal: document.getElementById('markupSlider')?.value || '3.0',
+                    targetHourlyProfit: document.getElementById('targetHourlyProfit')?.value || '20.00',
+                    targetMarginPct: document.getElementById('targetMarginPct')?.value || '50',
+                    channelId: state.channelId,
+                    marketplaceFeePct: document.getElementById('marketplaceFeePct')?.value || '4.99',
+                    marketplaceFixedFee: document.getElementById('marketplaceFixedFee')?.value || '0.00',
+                    taxFeePct: document.getElementById('taxFeePct')?.value || '0'
+                };
+                localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.warn('AutoSave failed:', e);
+            }
+        }
+
+        function loadAutoSavedState() {
+            try {
+                const raw = localStorage.getItem(AUTOSAVE_KEY);
+                if (!raw) {
+                    if (state.plates.length === 0) {
+                        state.plates = [
+                            { id: 'plate_1', name: 'Placa #1', materialKey: 'pla', filamentPriceKg: 80, weightGrams: 0, purgeGrams: 0, hours: 0, minutes: 0 }
+                        ];
+                    }
+                    return false;
+                }
+                const data = JSON.parse(raw);
+                if (!data) return false;
+
+                // Restore activeTab
+                if (data.activeTab) {
+                    state.activeTab = data.activeTab;
+                }
+
+                // Single part
+                if (data.pieceName !== undefined && document.getElementById('pieceName')) document.getElementById('pieceName').value = data.pieceName;
+                if (data.batchQty !== undefined && document.getElementById('batchQty')) document.getElementById('batchQty').value = data.batchQty;
+                if (data.weightGrams !== undefined && document.getElementById('weightGrams')) document.getElementById('weightGrams').value = data.weightGrams;
+                if (data.purgeGrams !== undefined && document.getElementById('purgeGrams')) document.getElementById('purgeGrams').value = data.purgeGrams;
+                if (data.printHours !== undefined && document.getElementById('printHours')) document.getElementById('printHours').value = data.printHours;
+                if (data.printMinutes !== undefined && document.getElementById('printMinutes')) document.getElementById('printMinutes').value = data.printMinutes;
+                if (data.filamentPriceKg !== undefined && document.getElementById('filamentPriceKg')) document.getElementById('filamentPriceKg').value = data.filamentPriceKg;
+                if (data.failureRate !== undefined && document.getElementById('failureRate')) document.getElementById('failureRate').value = data.failureRate;
+                if (data.materialId) {
+                    state.materialId = data.materialId;
+                    setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], `mat-${data.materialId}`);
+                }
+
+                // Multi parts
+                if (data.multiProjectName !== undefined && document.getElementById('multiProjectName')) document.getElementById('multiProjectName').value = data.multiProjectName;
+                if (data.multiBatchQty !== undefined && document.getElementById('multiBatchQty')) document.getElementById('multiBatchQty').value = data.multiBatchQty;
+                if (data.multiFailureRate !== undefined && document.getElementById('multiFailureRate')) document.getElementById('multiFailureRate').value = data.multiFailureRate;
+                if (Array.isArray(data.plates) && data.plates.length > 0) {
+                    state.plates = data.plates;
+                } else {
+                    state.plates = [
+                        { id: 'plate_1', name: 'Placa #1', materialKey: 'pla', filamentPriceKg: 80, weightGrams: 0, purgeGrams: 0, hours: 0, minutes: 0 }
+                    ];
+                }
+
+                // Machine
+                if (data.machineMode) selectMachineMode(data.machineMode);
+                if (data.powerPresetId && data.printerWatts) {
+                    state.powerPresetId = data.powerPresetId;
+                    document.getElementById('printerWatts').value = data.printerWatts;
+                    setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], data.powerPresetId);
+                }
+                if (data.kwhPresetId && data.kwhPrice) {
+                    state.kwhPresetId = data.kwhPresetId;
+                    document.getElementById('kwhPrice').value = data.kwhPrice;
+                    setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], data.kwhPresetId);
+                }
+                if (data.printerValue) document.getElementById('printerValue').value = data.printerValue;
+                if (data.printerLifespan) document.getElementById('printerLifespan').value = data.printerLifespan;
+                if (data.maintenanceHourly) document.getElementById('maintenanceHourly').value = data.maintenanceHourly;
+                if (data.fixedHourlyCost) document.getElementById('fixedHourlyCost').value = data.fixedHourlyCost;
+
+                // Extras
+                if (Array.isArray(data.quickAddons)) state.quickAddons = data.quickAddons;
+                if (Array.isArray(data.customExtras)) state.customExtras = data.customExtras;
+                if (data.laborMinutes !== undefined && document.getElementById('laborMinutes')) document.getElementById('laborMinutes').value = data.laborMinutes;
+                if (data.laborHourlyRate !== undefined && document.getElementById('laborHourlyRate')) document.getElementById('laborHourlyRate').value = data.laborHourlyRate;
+
+                // Strategy & Channels
+                if (data.pricingStrategy) selectPricingStrategy(data.pricingStrategy);
+                if (data.markupVal) selectMarkupPill(parseFloat(data.markupVal));
+                if (data.targetHourlyProfit && document.getElementById('targetHourlyProfit')) document.getElementById('targetHourlyProfit').value = data.targetHourlyProfit;
+                if (data.targetMarginPct && document.getElementById('targetMarginPct')) document.getElementById('targetMarginPct').value = data.targetMarginPct;
+                if (data.channelId) {
+                    state.channelId = data.channelId;
+                    setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], `chan-${data.channelId}`);
+                }
+                if (data.marketplaceFeePct && document.getElementById('marketplaceFeePct')) document.getElementById('marketplaceFeePct').value = data.marketplaceFeePct;
+                if (data.marketplaceFixedFee && document.getElementById('marketplaceFixedFee')) document.getElementById('marketplaceFixedFee').value = data.marketplaceFixedFee;
+                if (data.taxFeePct && document.getElementById('taxFeePct')) document.getElementById('taxFeePct').value = data.taxFeePct;
+
+                return true;
+            } catch (e) {
+                console.warn('Error loading autosaved state:', e);
+                return false;
+            }
+        }
+
+        // --- RESET FUNCTIONS ---
+        function confirmResetAll() {
+            const m = document.getElementById('reset-modal');
+            if (m) {
+                m.classList.remove('hidden');
+                m.classList.add('flex');
+            } else {
+                if (confirm('Deseja resetar todos os campos e apagar a memória salva?')) {
+                    executeResetAll();
+                }
+            }
+        }
+
+        function executeResetAll() {
+            closeModal('reset-modal');
+            try {
+                localStorage.removeItem(AUTOSAVE_KEY);
+            } catch (e) {}
+
+            state.activeTab = 'single';
+            state.materialId = 'pla';
+            state.machineMode = 'real';
+            state.powerPresetId = 'pwr-220';
+            state.kwhPresetId = 'kwh-edp-real';
+            state.pricingStrategy = 'markup';
+            state.channelId = 'card';
+            state.quickAddons = [
+                { id: 'box', name: 'Caixa + Plástico Bolha', cost: 2.50, active: false },
+                { id: 'paint', name: 'Primer / Tinta / Verniz', cost: 3.50, active: false },
+                { id: 'keyring', name: 'Argola de Chaveiro / Corrente', cost: 0.80, active: false },
+                { id: 'magnets', name: 'Ímãs de Neodímio / Cola', cost: 1.80, active: false }
+            ];
+            state.customExtras = [];
+            state.plates = [
+                { id: 'plate_1', name: 'Placa #1', materialKey: 'pla', filamentPriceKg: 80, weightGrams: 0, purgeGrams: 0, hours: 0, minutes: 0 }
+            ];
+
+            // Reset single fields
+            document.getElementById('pieceName').value = '';
+            document.getElementById('batchQty').value = '1';
+            document.getElementById('weightGrams').value = '';
+            document.getElementById('purgeGrams').value = '';
+            document.getElementById('printHours').value = '';
+            document.getElementById('printMinutes').value = '';
+            document.getElementById('filamentPriceKg').value = '80.00';
+            document.getElementById('failureRate').value = '10';
+
+            // Reset multi fields
+            if (document.getElementById('multiProjectName')) document.getElementById('multiProjectName').value = '';
+            if (document.getElementById('multiBatchQty')) document.getElementById('multiBatchQty').value = '1';
+            if (document.getElementById('multiFailureRate')) document.getElementById('multiFailureRate').value = '10';
+
+            // Reset labor
+            document.getElementById('laborMinutes').value = '';
+            document.getElementById('laborHourlyRate').value = '25.00';
+
+            // Reset machine to Kobra 4 study
+            resetKobra4ResearchDefaults();
+
+            // Reset strategy & channel
+            selectPricingStrategy('markup');
+            selectMarkupPill(3.0);
+            selectChannelPreset('card', 4.99, 0);
+            document.getElementById('taxFeePct').value = '0';
+
+            // Switch tab
+            switchCalculatorTab('single');
+
+            renderQuickAddons();
+            renderCustomExtras();
+            renderPlates();
+            calculateAll();
+            showToast('Calculadora redefinida para os padrões limpos!', 'info');
+        }
 
         function getSavedPresets() {
             try {
@@ -1650,6 +2420,7 @@
             if (p.quickAddons) state.quickAddons = p.quickAddons;
             if (p.customExtras) state.customExtras = p.customExtras;
 
+            switchCalculatorTab('single');
             renderQuickAddons();
             renderCustomExtras();
             calculateAll();
@@ -1742,11 +2513,17 @@
 
         // Init
         window.addEventListener('DOMContentLoaded', () => {
+            const hadSaved = loadAutoSavedState();
+            switchCalculatorTab(state.activeTab || 'single');
             lucide.createIcons();
+            renderPlates();
             renderQuickAddons();
             renderCustomExtras();
             updateSavedCountBadge();
             calculateAll();
+            if (hadSaved) {
+                showToast('Campos e placas restaurados da sessão anterior!', 'info');
+            }
         });
     </script>
 </body>
