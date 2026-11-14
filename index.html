@@ -233,6 +233,11 @@
                     <span class="hidden lg:inline">Imprimir / PDF</span>
                 </button>
 
+                <button type="button" onclick="openPricingGuideModal()" class="px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 transition flex items-center gap-1.5 text-xs font-bold" title="Aprenda como precificar e quanto cobrar por impressão 3D">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Como Cobrar?</span>
+                </button>
+
                 <button type="button" onclick="confirmResetAll()" class="px-3 py-2 rounded-xl bg-zinc-900 hover:bg-rose-950/40 text-zinc-300 hover:text-rose-400 border border-zinc-700 hover:border-rose-500/40 transition flex items-center gap-1.5 text-xs font-semibold" title="Limpar todos os campos e resetar para o padrão">
                     <i data-lucide="rotate-ccw" class="w-4 h-4 text-rose-400"></i>
                     <span class="hidden sm:inline">Resetar</span>
@@ -904,7 +909,7 @@
         <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-5">
 
             <!-- MAIN FINANCIAL RECEIPT CARD -->
-            <section class="rounded-2xl bg-gradient-to-b from-[#141918] to-surface border-2 border-emerald-500/40 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+            <section id="receipt-card" class="rounded-2xl bg-gradient-to-b from-[#141918] to-surface border-2 border-emerald-500/40 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -top-20 -right-20 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div class="flex items-center justify-between mb-3">
@@ -1033,12 +1038,72 @@
                 </div>
 
                 <!-- Wholesale / Atacado Reference -->
-                <div class="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800 flex items-center justify-between mb-5">
+                <div class="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800 flex items-center justify-between mb-4">
                     <div>
                         <span class="text-xs font-bold text-zinc-200 block">Preço Atacado / Revenda (2.0x)</span>
                         <span class="text-[11px] text-zinc-400">Para lojistas ou pedidos acima de 10 un.</span>
                     </div>
                     <span id="res-wholesale-price" class="font-mono text-base font-extrabold text-amber-400">R$ 0,00</span>
+                </div>
+
+                <!-- GUIA RÁPIDO: QUANTO COBRAR DO CLIENTE -->
+                <div class="mb-5 p-4 rounded-xl bg-gradient-to-br from-zinc-900 via-surface to-zinc-950 border border-emerald-500/30 space-y-3">
+                    <div class="flex items-center justify-between border-b border-zinc-800/80 pb-2.5">
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-white">
+                            <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Quanto Cobrar do Cliente?</span>
+                        </div>
+                        <button type="button" onclick="openPricingGuideModal()" class="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 underline flex items-center gap-1">
+                            <span>Entenda as taxas</span>
+                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800">
+                            <div class="flex items-center gap-1 text-[11px] text-zinc-400">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                <span>Cartão / Loja</span>
+                            </div>
+                            <div id="res-guide-card-price" class="text-sm sm:text-base font-mono font-extrabold text-white mt-1">R$ 0,00</div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Preço cheio c/ taxas</div>
+                        </div>
+
+                        <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-emerald-500/30">
+                            <div class="flex items-center gap-1 text-[11px] text-emerald-300 font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                <span>À Vista / PIX</span>
+                            </div>
+                            <div id="res-guide-pix-price" class="text-sm sm:text-base font-mono font-extrabold text-emerald-400 mt-1">R$ 0,00</div>
+                            <div class="text-[10px] text-emerald-300/70 mt-0.5">Desconto sem taxa</div>
+                        </div>
+
+                        <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800">
+                            <div class="flex items-center gap-1 text-[11px] text-amber-300">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                <span>Mínimo / Desconto</span>
+                            </div>
+                            <div id="res-guide-min-price" class="text-sm sm:text-base font-mono font-extrabold text-amber-400 mt-1">R$ 0,00</div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Piso p/ não ter prejuízo</div>
+                        </div>
+
+                        <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800">
+                            <div class="flex items-center gap-1 text-[11px] text-zinc-400">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                <span>Atacado (+10 un)</span>
+                            </div>
+                            <div id="res-guide-wholesale-price" class="text-sm sm:text-base font-mono font-extrabold text-zinc-200 mt-1">R$ 0,00</div>
+                            <div class="text-[10px] text-zinc-500 mt-0.5">Markup 2.0x por volume</div>
+                        </div>
+                    </div>
+
+                    <!-- Practical Tip Box -->
+                    <div class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/25 flex items-start gap-2">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                        <p class="text-[11px] text-emerald-200 leading-relaxed" id="res-practical-tip">
+                            Preencha os dados da impressão para ver as opções recomendadas de cobrança e seu lucro limpo.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Primary Action Buttons -->
@@ -1057,22 +1122,187 @@
     </main>
 
     <!-- MOBILE STICKY BOTTOM SUMMARY -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-nav border-t border-zinc-800 px-4 py-3 shadow-2xl no-print">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
-            <div>
-                <span class="text-[10px] uppercase tracking-wider text-zinc-400 block">Preço de Venda</span>
-                <div class="flex items-baseline gap-2">
-                    <span id="mobile-unit-price" class="text-xl font-extrabold font-mono text-white">R$ 0,00</span>
-                    <span id="mobile-profit-badge" class="text-xs font-mono font-bold text-emerald-400">+R$ 0,00 lucro</span>
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-nav border-t border-zinc-800 px-3.5 py-2.5 shadow-2xl no-print">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+            <div class="cursor-pointer min-w-0" onclick="scrollToReceipt()">
+                <span class="text-[10px] uppercase tracking-wider text-zinc-400 block font-medium truncate">Preço Sugerido</span>
+                <div class="flex items-baseline gap-1.5 truncate">
+                    <span id="mobile-unit-price" class="text-lg font-extrabold font-mono text-white">R$ 0,00</span>
+                    <span id="mobile-profit-badge" class="text-[11px] font-mono font-bold text-emerald-400">+R$ 0,00</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="openGithubModal()" class="p-2.5 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700" title="Informações e exportação">
-                    <i data-lucide="github" class="w-4 h-4"></i>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="openPricingGuideModal()" class="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 hover:text-white transition active:scale-95" title="Como Cobrar? Entenda taxas e lucros">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-emerald-400"></i>
                 </button>
-                <button type="button" onclick="copyWhatsAppQuote()" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
-                    <i data-lucide="copy" class="w-4 h-4"></i>
-                    <span>Orçamento</span>
+                <button type="button" onclick="scrollToReceipt()" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 font-bold text-xs flex items-center gap-1 transition active:scale-95" title="Ver Detalhes do Recibo">
+                    <i data-lucide="receipt" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="hidden xs:inline">Resumo</span>
+                </button>
+                <button type="button" onclick="copyWhatsAppQuote()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center gap-1 shadow-lg shadow-emerald-500/20 transition active:scale-95" title="Copiar Orçamento Formatado">
+                    <i data-lucide="share-2" class="w-4 h-4 stroke-[2.2]"></i>
+                    <span>WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GUIA COMPLETO DE PRECIFICAÇÃO & COMO COBRAR -->
+    <div id="pricing-guide-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 no-print overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="bg-surface border border-zinc-700 rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
+            <button type="button" onclick="closeModal('pricing-guide-modal')" class="absolute top-4 right-4 p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition" aria-label="Fechar modal">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center gap-3 pb-4 mb-4 border-b border-zinc-800">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-display text-lg font-bold text-white">Guia de Precificação & Como Cobrar</h3>
+                    <p class="text-xs text-zinc-400">Entenda cada taxa, custo da máquina e como ter lucro real na impressão 3D</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs text-zinc-300 leading-relaxed">
+                <!-- Golden Rule -->
+                <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1.5">
+                    <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-sm">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        <span>A Regra de Ouro: Por que nunca cobrar apenas o filamento?</span>
+                    </div>
+                    <p class="text-zinc-300">
+                        O filamento é apenas <strong>~30% do custo real</strong> de uma peça. Os outros <strong>70%</strong> são a eletricidade, o desgaste da impressora (bicos, correias, mesa PEI), seu tempo humano no computador e a taxa de falha. Quem cobra apenas "preço do filamento" paga para trabalhar e quebra o negócio quando a impressora precisa de conserto.
+                    </p>
+                </div>
+
+                <!-- Cost Breakdown Accordion/Grid -->
+                <div class="space-y-2.5">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i>
+                        <span>O Que É Cada Função & Custo na Calculadora:</span>
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-emerald-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                Filamento + Purga (g)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                Matéria-prima gasta. Em impressões multicoloridas com o <strong>ACE 2 Pro</strong>, a torre de purga descarta filamento na troca de cores. A calculadora soma os dois.
+                            </p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-amber-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                Taxa de Falha / Risco (10%)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                Margem de segurança obrigatória. Se 1 em cada 10 impressões descolar da mesa ou o filamento quebrar, essa taxa garante que o prejuízo não saia do seu bolso!
+                            </p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-cyan-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                Consumo Elétrico (Watts + kWh)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                A Kobra 4 gasta ~140W em monocolor e ~220W com secador ativo a 65°C. Isso dá cerca de R$ 0,20 a R$ 0,30 por hora de energia elétrica.
+                            </p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-purple-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                Depreciação da Máquina (5.000h)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                A impressora custa R$ 3.339. Cobrando ~R$ 0,67 por hora rodada, ao fim de 5.000 horas você já guardou o dinheiro para comprar outra impressora nova sem esforço!
+                            </p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-rose-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                                Manutenção Preventiva (~R$ 0,25/h)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                Reserva para reposição periódica de bicos (nozzles), tubos PTFE, graxa para os eixos lineares, álcool isopropílico e folhas PEI.
+                            </p>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1">
+                            <span class="font-bold text-blue-300 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                                Mão de Obra (Horas Humanas)
+                            </span>
+                            <p class="text-[11px] text-zinc-400">
+                                O valor da sua hora preparando o modelo no fatiador, limpando suportes, lixando ou embalando. Se você gasta 15min e sua hora é R$ 25, são R$ 6,25 de trabalho humano.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How Much to Charge (Markup Table) -->
+                <div class="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-1.5">
+                        <i data-lucide="tag" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Qual Preço Cobrar? (Multiplicadores de Markup):</span>
+                    </h4>
+
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex items-start gap-2 p-2 rounded-lg bg-zinc-950/60 border border-zinc-800">
+                            <span class="font-mono font-bold text-amber-400 px-2 py-0.5 rounded bg-amber-400/10 shrink-0">2.0x</span>
+                            <div>
+                                <strong class="text-zinc-200">Preço de Atacado / Amigos / Pedidos Grandes:</strong>
+                                <span class="text-zinc-400 block">Use para revenda ou pedidos de 10+ unidades. Margem menor compensada pelo volume.</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 p-2 rounded-lg bg-zinc-950/60 border border-zinc-800">
+                            <span class="font-mono font-bold text-cyan-400 px-2 py-0.5 rounded bg-cyan-400/10 shrink-0">2.5x</span>
+                            <div>
+                                <strong class="text-zinc-200">Preço Mínimo Competitivo:</strong>
+                                <span class="text-zinc-400 block">Peças utilitárias simples (suportes, tampas, caixas), fáceis de imprimir e sem suportes.</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 p-2 rounded-lg bg-zinc-950/60 border border-emerald-500/30">
+                            <span class="font-mono font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-400/10 shrink-0">3.0x</span>
+                            <div>
+                                <strong class="text-emerald-300">Padrão Ouro de Mercado (Recomendado):</strong>
+                                <span class="text-zinc-400 block">Padrão da comunidade STLFLIX e birôs profissionais. Margem saudável (~50% a 60% líquida) para crescer com segurança.</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 p-2 rounded-lg bg-zinc-950/60 border border-zinc-800">
+                            <span class="font-mono font-bold text-purple-400 px-2 py-0.5 rounded bg-purple-400/10 shrink-0">4.0x a 5.0x</span>
+                            <div>
+                                <strong class="text-zinc-200">Peças Exclusivas, Action Figures, Cosplay e Pintura:</strong>
+                                <span class="text-zinc-400 block">Modelos com acabamento manual fino, pintura artística ou arquivos premium autorizados.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Fees Protection -->
+                <div class="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-1.5">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Como as Taxas de Cartão e Plataforma Funcionam:</span>
+                    </h4>
+                    <p class="text-[11px] text-zinc-300 leading-relaxed">
+                        Quando você vende no Mercado Livre (16,5% + R$ 6) ou no Cartão (4,99%), a operadora desconta a taxa do valor final. O Cube Forge calcula o valor por <strong>Markup Reverso</strong>: ele adiciona a taxa por fora para que, <em>mesmo após o desconto da maquininha ou do marketplace</em>, caia <strong>exatamente o lucro pretendido</strong> na sua conta bancária!
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-zinc-800 flex justify-end">
+                <button type="button" onclick="closeModal('pricing-guide-modal')" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition active:scale-95">
+                    Entendi! Voltar à Calculadora
                 </button>
             </div>
         </div>
@@ -1171,6 +1401,32 @@
     <!-- APPLICATION SCRIPT -->
     <script>
         // --- 1. APPLICATION STATE ---
+        function safeCreateIcons() {
+            try {
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+            } catch (err) {
+                console.warn('Lucide icons error:', err);
+            }
+        }
+
+        function scrollToReceipt() {
+            const el = document.getElementById('receipt-card');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function openPricingGuideModal() {
+            const m = document.getElementById('pricing-guide-modal');
+            if (m) {
+                m.classList.remove('hidden');
+                m.classList.add('flex');
+                safeCreateIcons();
+            }
+        }
+
         const state = {
             activeTab: 'single', // 'single' | 'multi'
             materialId: 'pla',
@@ -1331,7 +1587,7 @@
                 `;
                 container.appendChild(div);
             });
-            lucide.createIcons();
+            safeCreateIcons();
         }
 
         function addNewPlate(data = null) {
@@ -1505,11 +1761,11 @@
         // --- 3. MATERIAL PRESETS ---
         function selectMaterialPreset(matKey, price, label) {
             state.materialId = matKey;
-            document.getElementById('filamentPriceKg').value = price.toFixed(2);
-            document.getElementById('active-material-label').textContent = `Selecionado: ${label}`;
+            const el = document.getElementById('filamentPriceKg');
+            if (el) el.value = price.toFixed(2);
+            const lbl = document.getElementById('active-material-label');
+            if (lbl) lbl.textContent = `Selecionado: ${label}`;
             setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], `mat-${matKey}`);
-            calculateAll();
-        }
             calculateAll();
         }
 
@@ -1638,7 +1894,7 @@
                 `;
                 container.appendChild(row);
             });
-            lucide.createIcons();
+            safeCreateIcons();
         }
 
         function addCustomExtra(name = '', cost = 2.00) {
@@ -1885,14 +2141,20 @@
             const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : currentMarkup;
             const profitPerPrintHour = totalPrintHours > 0 ? (unitNetProfit * qty) / totalPrintHours : unitNetProfit;
 
-            // Wholesale Price (2.0x cost + fees)
-            const unitWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / (1 - totalFeePct);
+            // Practical Pricing Guidance Options
+            const guideCardPrice = unitSellingPrice;
+            const pixFeePct = Math.min(0.90, taxPct); // Pix has 0% payment commission fee
+            const currentDesiredRevenue = state.pricingStrategy === 'markup' ? (unitCost * currentMarkup) : (state.pricingStrategy === 'hourly' ? (unitCost + ((totalPrintHours * (parseFloat(document.getElementById('targetHourlyProfit')?.value) || 20)) / qty)) : (unitCost / Math.max(0.05, 1 - (parseFloat(document.getElementById('targetMarginPct')?.value) || 50) / 100)));
+            const guidePixPrice = (currentDesiredRevenue + (taxPct > 0 ? 0 : 0)) / Math.max(0.1, 1 - pixFeePct);
+            const guideMinPrice = ((unitCost * 2.2) + fixedFeePerUnit) / (1 - totalFeePct);
+            const guideWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / (1 - totalFeePct);
+            const unitWholesalePrice = guideWholesalePrice;
 
             lastCalc = {
                 pieceName, qty, totalGramsBatch, hours, minutes, totalPrintHours,
                 unitCost, totalBatchCost, unitSellingPrice, batchSellingPrice,
                 unitNetProfit, netMarginPct, effectiveMarkup, profitPerPrintHour,
-                unitWholesalePrice, totalMachineHourly
+                unitWholesalePrice, totalMachineHourly, guideCardPrice, guidePixPrice, guideMinPrice
             };
 
             // Update DOM
@@ -1920,6 +2182,25 @@
             document.getElementById('mobile-profit-badge').textContent = `+${formatBRL(unitNetProfit)} líq.`;
 
             document.getElementById('res-wholesale-price').textContent = formatBRL(unitWholesalePrice);
+
+            // Update Negotiation & Pricing Guide Card elements
+            const elGuideCard = document.getElementById('res-guide-card-price');
+            if (elGuideCard) elGuideCard.textContent = formatBRL(guideCardPrice);
+            const elGuidePix = document.getElementById('res-guide-pix-price');
+            if (elGuidePix) elGuidePix.textContent = formatBRL(guidePixPrice);
+            const elGuideMin = document.getElementById('res-guide-min-price');
+            if (elGuideMin) elGuideMin.textContent = formatBRL(guideMinPrice);
+            const elGuideWholesale = document.getElementById('res-guide-wholesale-price');
+            if (elGuideWholesale) elGuideWholesale.textContent = formatBRL(guideWholesalePrice);
+
+            const elPracticalTip = document.getElementById('res-practical-tip');
+            if (elPracticalTip) {
+                if (unitCost > 0) {
+                    elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(guideCardPrice)}</strong> no cartão ou <strong class="text-emerald-300">${formatBRL(guidePixPrice)}</strong> no PIX, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
+                } else {
+                    elPracticalTip.textContent = 'Preencha os dados da impressão para ver as opções recomendadas de cobrança e seu lucro limpo.';
+                }
+            }
 
             updateBarRow('filament', unitFilament, unitSellingPrice);
             updateBarRow('machine', unitMachine, unitSellingPrice);
@@ -2063,16 +2344,20 @@
 
         function copyWhatsAppQuote() {
             const r = lastCalc;
+            if (!r) return;
             const isSingle = state.activeTab === 'single';
             const timeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
             let msg = `🧊 *ORÇAMENTO IMPRESSÃO 3D — CUBE FORGE*\n`;
 
             if (isSingle) {
                 msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-                msg += `📦 *Peça:* ${r.pieceName}\n`;
+                msg += `📦 *Item:* ${r.pieceName || 'Peça Impressa 3D'}\n`;
                 msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
-                msg += `⚖️ *Peso Total:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
-                msg += `💰 *Valor Unitário:* *${formatBRL(r.unitSellingPrice)}*\n`;
+                msg += `⚖️ *Peso Estimado:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
+                msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(r.unitSellingPrice)}* ${r.qty > 1 ? '(unidade)' : ''}\n`;
+                if (r.guidePixPrice) {
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(r.guidePixPrice)}* ${r.qty > 1 ? '(unidade)' : ''}\n`;
+                }
                 if (r.qty > 1) {
                     msg += `💎 *Valor Total do Lote (${r.qty} un):* *${formatBRL(r.batchSellingPrice)}*\n`;
                 }
@@ -2080,26 +2365,29 @@
             } else {
                 msg += `📁 *PROJETO MULTI-PEÇAS / PLACAS*\n`;
                 msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-                msg += `📦 *Projeto:* ${r.pieceName}\n`;
+                msg += `📦 *Projeto:* ${r.pieceName || 'Projeto Multi-Peças 3D'}\n`;
                 msg += `🔢 *Quantidade de Kits:* ${r.qty} ${r.qty > 1 ? 'kits' : 'kit'}\n`;
                 msg += `🧩 *Total de Placas por Kit:* ${state.plates.length} placas\n`;
                 const kitWeight = (r.totalGramsBatch / r.qty).toFixed(0);
-                msg += `⚖️ *Peso Total do Kit:* ${kitWeight}g | ⏱️ *Tempo de Impressão:* ${timeStr}\n\n`;
+                msg += `⚖️ *Peso do Kit:* ${kitWeight}g | ⏱️ *Tempo de Produção:* ${timeStr}\n\n`;
                 msg += `📋 *Detalhamento das Placas:*\n`;
                 state.plates.forEach((p, idx) => {
                     const pTime = `${p.hours || 0}h${p.minutes ? ' ' + p.minutes + 'm' : ''}`;
-                    const pWeight = ((p.weightGrams || 0) + (p.purgeGrams || 0)).toFixed(0);
+                    const pWeight = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
                     msg += `  ${idx + 1}. *${p.name || 'Placa #' + (idx + 1)}*: ${pWeight}g • ${pTime}\n`;
                 });
-                msg += `\n💰 *Valor por Kit Completo:* *${formatBRL(r.unitSellingPrice)}*\n`;
+                msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(r.unitSellingPrice)}*\n`;
+                if (r.guidePixPrice) {
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(r.guidePixPrice)}*\n`;
+                }
                 if (r.qty > 1) {
-                    msg += `💎 *Valor Total (${r.qty} kits):* *${formatBRL(r.batchSellingPrice)}*\n`;
+                    msg += `💎 *Total Geral (${r.qty} kits):* *${formatBRL(r.batchSellingPrice)}*\n`;
                 }
                 msg += `🏷️ *Atacado (+10 kits):* ${formatBRL(r.unitWholesalePrice)}/kit\n`;
             }
 
             msg += `━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `_Impressão de alta precisão em Anycubic Kobra 4 Combo_`;
+            msg += `_Alta resolução calibrada em Anycubic Kobra 4 Combo + ACE 2 Pro_`;
 
             copyToClipboard(msg).then(() => {
                 showToast('Orçamento formatado copiado! Só colar no WhatsApp.', 'success');
@@ -2457,7 +2745,7 @@
                     </div>
                 </div>
             `).join('');
-            lucide.createIcons();
+            safeCreateIcons();
         }
 
         // --- 11. MODALS & UTILITIES ---
@@ -2515,7 +2803,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const hadSaved = loadAutoSavedState();
             switchCalculatorTab(state.activeTab || 'single');
-            lucide.createIcons();
+            safeCreateIcons();
             renderPlates();
             renderQuickAddons();
             renderCustomExtras();
