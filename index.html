@@ -188,7 +188,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen pb-28 lg:pb-16 selection:bg-emerald-500 selection:text-zinc-950">
+<body class="min-h-screen pb-36 lg:pb-16 selection:bg-emerald-500 selection:text-zinc-950">
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -918,10 +918,10 @@
         </div>
 
         <!-- RIGHT COLUMN: 5 COLS ON DESKTOP (STICKY RECEIPT & ANALYTICS) -->
-        <div class="lg:col-span-5 lg:sticky lg:top-24 space-y-5">
+        <div class="lg:col-span-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto space-y-5 pr-1">
 
             <!-- MAIN FINANCIAL RECEIPT CARD -->
-            <section id="receipt-card" class="rounded-2xl bg-gradient-to-b from-[#141918] to-surface border-2 border-emerald-500/40 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+            <section id="receipt-card" class="scroll-mt-24 sm:scroll-mt-28 rounded-2xl bg-gradient-to-b from-[#141918] to-surface border-2 border-emerald-500/40 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -top-20 -right-20 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div class="flex items-center justify-between mb-3">
@@ -947,19 +947,19 @@
                 </div>
 
                 <!-- Key Financial Indicators -->
-                <div class="grid grid-cols-2 gap-3 mb-5">
-                    <div class="p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
-                        <span class="text-[11px] text-zinc-400 block mb-0.5">Custo Produção (Un.)</span>
-                        <span id="res-unit-cost" class="text-lg font-mono font-bold text-zinc-100">R$ 0,00</span>
-                        <span id="res-batch-cost" class="text-[11px] font-mono text-zinc-500 block mt-0.5">Lote: R$ 0,00</span>
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mb-5">
+                    <div class="p-3 sm:p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                        <span class="text-[10px] sm:text-[11px] text-zinc-400 block mb-0.5 font-medium">Custo Produção (Un.)</span>
+                        <span id="res-unit-cost" class="text-base sm:text-lg font-mono font-bold text-zinc-100 block">R$ 0,00</span>
+                        <span id="res-batch-cost" class="text-[10px] sm:text-[11px] font-mono text-zinc-500 block mt-0.5 truncate">Lote: R$ 0,00</span>
                     </div>
 
-                    <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
-                        <span class="text-[11px] text-emerald-300/90 block mb-0.5">Lucro Líquido Livre</span>
-                        <span id="res-net-profit" class="text-lg font-mono font-extrabold text-emerald-400">R$ 0,00</span>
-                        <div class="flex items-center justify-between text-[11px] font-mono text-emerald-300/80 mt-0.5">
-                            <span id="res-profit-margin">Margem: 0%</span>
-                            <span id="res-profit-per-hour">R$ 0/h</span>
+                    <div class="p-3 sm:p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
+                        <span class="text-[10px] sm:text-[11px] text-emerald-300 block mb-0.5 font-medium">Lucro Líquido Livre</span>
+                        <span id="res-net-profit" class="text-base sm:text-lg font-mono font-extrabold text-emerald-400 block">R$ 0,00</span>
+                        <div class="text-[10px] sm:text-[11px] font-mono text-emerald-300/80 mt-0.5 flex items-center justify-between gap-1">
+                            <span id="res-profit-margin" class="whitespace-nowrap">Margem: 0%</span>
+                            <span id="res-profit-per-hour" class="whitespace-nowrap text-right">R$ 0/h</span>
                         </div>
                     </div>
                 </div>
@@ -1049,14 +1049,7 @@
                     </div>
                 </div>
 
-                <!-- Wholesale / Atacado Reference -->
-                <div class="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800 flex items-center justify-between mb-4">
-                    <div>
-                        <span class="text-xs font-bold text-zinc-200 block">Preço Atacado / Revenda (2.0x)</span>
-                        <span class="text-[11px] text-zinc-400">Para lojistas ou pedidos acima de 10 un.</span>
-                    </div>
-                    <span id="res-wholesale-price" class="font-mono text-base font-extrabold text-amber-400">R$ 0,00</span>
-                </div>
+
 
                 <!-- GUIA RÁPIDO: QUANTO COBRAR DO CLIENTE -->
                 <div class="mb-5 p-4 rounded-xl bg-gradient-to-br from-zinc-900 via-surface to-zinc-950 border border-emerald-500/30 space-y-3">
@@ -1134,7 +1127,7 @@
     </main>
 
     <!-- MOBILE STICKY BOTTOM SUMMARY -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-nav border-t border-zinc-800/90 px-3 py-2 shadow-2xl no-print">
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-nav border-t border-zinc-800/90 px-3 py-2 shadow-2xl no-print transition-all duration-300 ease-in-out">
         <div class="max-w-md mx-auto flex items-center justify-between gap-2">
             <!-- Price & Profit (clickable to scroll down to receipt) -->
             <button type="button" onclick="scrollToReceipt()" class="text-left flex-1 min-w-0 pr-1 group focus:outline-none">
@@ -1495,7 +1488,14 @@
         function scrollToReceipt() {
             const el = document.getElementById('receipt-card');
             if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const header = document.querySelector('header');
+                const headerOffset = (header ? header.offsetHeight : 60) + 16;
+                const elementPosition = el.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({
+                    top: Math.max(0, offsetPosition),
+                    behavior: 'smooth'
+                });
             }
         }
 
@@ -2271,7 +2271,7 @@
             document.getElementById('res-profit-per-hour').textContent = `${formatBRL(profitPerPrintHour)}/h`;
             document.getElementById('mobile-profit-badge').textContent = `+${formatBRL(unitNetProfit)} líq.`;
 
-            document.getElementById('res-wholesale-price').textContent = formatBRL(unitWholesalePrice);
+            const elOldWs = document.getElementById('res-wholesale-price'); if (elOldWs) elOldWs.textContent = formatBRL(unitWholesalePrice);
 
             // Update Negotiation & Pricing Guide Card elements
             const elGuideCard = document.getElementById('res-guide-card-price');
@@ -2288,7 +2288,7 @@
                 if (unitCost > 0) {
                     elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(guideCardPrice)}</strong> no cartão ou <strong class="text-emerald-300">${formatBRL(guidePixPrice)}</strong> no PIX, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
                 } else {
-                    elPracticalTip.textContent = 'Preencha os dados da impressão para ver as opções recomendadas de cobrança e seu lucro limpo.';
+                    elPracticalTip.innerHTML = '💡 Preencha o <strong class="text-white">peso (g)</strong> e <strong class="text-white">tempo</strong> da peça para ver o preço recomendado e seu lucro em tempo real.';
                 }
             }
 
@@ -2892,6 +2892,28 @@
             }, 3200);
         }
 
+        // Auto-hide mobile bottom bar when receipt is already visible in viewport
+        function initMobileBarAutoObserver() {
+            const receipt = document.getElementById('receipt-card');
+            const mobileBar = document.querySelector('.lg\\:hidden.fixed.bottom-0');
+            if (!receipt || !mobileBar || !window.IntersectionObserver) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // When receipt is visible on screen, fade and slide out mobile bar
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
+                        mobileBar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+                        mobileBar.classList.remove('translate-y-0', 'opacity-100');
+                    } else {
+                        mobileBar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+                        mobileBar.classList.add('translate-y-0', 'opacity-100');
+                    }
+                });
+            }, { threshold: [0, 0.25, 0.5, 0.75, 1.0] });
+
+            observer.observe(receipt);
+        }
+
         // Init
         window.addEventListener('DOMContentLoaded', () => {
             const hadSaved = loadAutoSavedState();
@@ -2902,6 +2924,7 @@
             renderCustomExtras();
             updateSavedCountBadge();
             calculateAll();
+            initMobileBarAutoObserver();
             if (hadSaved) {
                 showToast('Campos e placas restaurados da sessão anterior!', 'info');
             }
