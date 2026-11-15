@@ -1080,7 +1080,7 @@
                                 <span>À Vista / PIX</span>
                             </div>
                             <div id="res-guide-pix-price" class="text-sm sm:text-base font-mono font-extrabold text-emerald-400 mt-1">R$ 0,00</div>
-                            <div class="text-[10px] text-emerald-300/70 mt-0.5">Desconto sem taxa</div>
+                            <div id="res-guide-pix-sub" class="text-[10px] text-emerald-300/80 font-medium mt-0.5">Desconto sem taxa</div>
                         </div>
 
                         <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800">
@@ -2231,13 +2231,34 @@
             const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : currentMarkup;
             const profitPerPrintHour = totalPrintHours > 0 ? (unitNetProfit * qty) / totalPrintHours : unitNetProfit;
 
-            // Practical Pricing Guidance Options
-            const guideCardPrice = unitSellingPrice;
-            const pixFeePct = Math.min(0.90, taxPct); // Pix has 0% payment commission fee
+            // Practical Pricing Guidance Options (Cartão vs PIX separados e precisos)
+            const standardCardRate = 0.0499; // Taxa padrão de maquininha/link 1x no Brasil (4,99%)
+            const effectiveCardRate = mktPct > 0 ? mktPct : standardCardRate;
             const currentDesiredRevenue = state.pricingStrategy === 'markup' ? (unitCost * currentMarkup) : (state.pricingStrategy === 'hourly' ? (unitCost + ((totalPrintHours * (parseFloat(document.getElementById('targetHourlyProfit')?.value) || 20)) / qty)) : (unitCost / Math.max(0.05, 1 - (parseFloat(document.getElementById('targetMarginPct')?.value) || 50) / 100)));
-            const guidePixPrice = (currentDesiredRevenue + (taxPct > 0 ? 0 : 0)) / Math.max(0.1, 1 - pixFeePct);
-            const guideMinPrice = ((unitCost * 2.2) + fixedFeePerUnit) / (1 - totalFeePct);
-            const guideWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / (1 - totalFeePct);
+
+            let guideCardPrice = 0;
+            let guidePixPrice = 0;
+
+            if (unitCost > 0) {
+                if (mktPct === 0) {
+                    // Usuário selecionou PIX na tela: preço base é o valor limpo no PIX
+                    guidePixPrice = currentDesiredRevenue / Math.max(0.1, 1 - taxPct);
+                    // Preço no cartão embute a taxa de maquininha para repassar ao cliente
+                    guideCardPrice = (guidePixPrice + fixedFeePerUnit) / Math.max(0.1, 1 - effectiveCardRate);
+                } else {
+                    // Usuário selecionou Cartão ou Marketplace na tela: unitSellingPrice já é o preço no cartão
+                    guideCardPrice = unitSellingPrice;
+                    // Preço no PIX é o valor direto sem a comissão de pagamento/marketplace
+                    guidePixPrice = currentDesiredRevenue / Math.max(0.1, 1 - taxPct);
+                    // Garante que o PIX tenha sempre vantagem real de desconto sobre o cartão
+                    if (guidePixPrice >= guideCardPrice) {
+                        guidePixPrice = guideCardPrice * (1 - effectiveCardRate);
+                    }
+                }
+            }
+
+            const guideMinPrice = ((unitCost * 2.2) + fixedFeePerUnit) / Math.max(0.1, 1 - totalFeePct);
+            const guideWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / Math.max(0.1, 1 - totalFeePct);
             const unitWholesalePrice = guideWholesalePrice;
 
             lastCalc = {
@@ -2283,10 +2304,21 @@
             const elGuideWholesale = document.getElementById('res-guide-wholesale-price');
             if (elGuideWholesale) elGuideWholesale.textContent = formatBRL(guideWholesalePrice);
 
+            const pixSavings = Math.max(0, guideCardPrice - guidePixPrice);
+            const elPixSub = document.getElementById('res-guide-pix-sub');
+            if (elPixSub) {
+                if (unitCost > 0 && pixSavings > 0.05) {
+                    elPixSub.textContent = `Economia de ${formatBRL(pixSavings)}`;
+                } else {
+                    elPixSub.textContent = 'Desconto sem taxa';
+                }
+            }
+
             const elPracticalTip = document.getElementById('res-practical-tip');
             if (elPracticalTip) {
                 if (unitCost > 0) {
-                    elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(guideCardPrice)}</strong> no cartão ou <strong class="text-emerald-300">${formatBRL(guidePixPrice)}</strong> no PIX, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
+                    const savingsStr = pixSavings > 0.05 ? ` (economia de ${formatBRL(pixSavings)})` : '';
+                    elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(guideCardPrice)}</strong> no cartão ou <strong class="text-emerald-300 font-bold">${formatBRL(guidePixPrice)}</strong> no PIX${savingsStr}, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
                 } else {
                     elPracticalTip.innerHTML = '💡 Preencha o <strong class="text-white">peso (g)</strong> e <strong class="text-white">tempo</strong> da peça para ver o preço recomendado e seu lucro em tempo real.';
                 }
@@ -2439,17 +2471,27 @@
             const timeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
             let msg = `🧊 *ORÇAMENTO IMPRESSÃO 3D — CUBE FORGE*\n`;
 
+            // Always use separated Cartão and PIX prices
+            const cardPrice = r.guideCardPrice || r.unitSellingPrice;
+            const pixPrice = r.guidePixPrice || (cardPrice * 0.95);
+            const savings = Math.max(0, cardPrice - pixPrice);
+            const savingsFormatted = formatBRL(savings);
+
             if (isSingle) {
                 msg += `━━━━━━━━━━━━━━━━━━━━\n`;
                 msg += `📦 *Item:* ${r.pieceName || 'Peça Impressa 3D'}\n`;
                 msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
                 msg += `⚖️ *Peso Estimado:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
-                msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(r.unitSellingPrice)}* ${r.qty > 1 ? '(unidade)' : ''}\n`;
-                if (r.guidePixPrice) {
-                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(r.guidePixPrice)}* ${r.qty > 1 ? '(unidade)' : ''}\n`;
-                }
+
                 if (r.qty > 1) {
-                    msg += `💎 *Valor Total do Lote (${r.qty} un):* *${formatBRL(r.batchSellingPrice)}*\n`;
+                    const batchCard = cardPrice * r.qty;
+                    const batchPix = pixPrice * r.qty;
+                    const batchSavings = Math.max(0, batchCard - batchPix);
+                    msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(cardPrice)}* /un (Total: ${formatBRL(batchCard)})\n`;
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}* /un (Total: *${formatBRL(batchPix)}* — economia de ${formatBRL(batchSavings)}!)\n`;
+                } else {
+                    msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(cardPrice)}*\n`;
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}*${savings > 0.05 ? ' (economia de ' + savingsFormatted + '!)' : ''}\n`;
                 }
                 msg += `🏷️ *Atacado (+10 un):* ${formatBRL(r.unitWholesalePrice)}/un\n`;
             } else {
@@ -2466,12 +2508,16 @@
                     const pWeight = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
                     msg += `  ${idx + 1}. *${p.name || 'Placa #' + (idx + 1)}*: ${pWeight}g • ${pTime}\n`;
                 });
-                msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(r.unitSellingPrice)}*\n`;
-                if (r.guidePixPrice) {
-                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(r.guidePixPrice)}*\n`;
-                }
+
                 if (r.qty > 1) {
-                    msg += `💎 *Total Geral (${r.qty} kits):* *${formatBRL(r.batchSellingPrice)}*\n`;
+                    const batchCard = cardPrice * r.qty;
+                    const batchPix = pixPrice * r.qty;
+                    const batchSavings = Math.max(0, batchCard - batchPix);
+                    msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(cardPrice)}* (Total: ${formatBRL(batchCard)})\n`;
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}* (Total: *${formatBRL(batchPix)}* — economia de ${formatBRL(batchSavings)}!)\n`;
+                } else {
+                    msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(cardPrice)}*\n`;
+                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}*${savings > 0.05 ? ' (economia de ' + savingsFormatted + '!)' : ''}\n`;
                 }
                 msg += `🏷️ *Atacado (+10 kits):* ${formatBRL(r.unitWholesalePrice)}/kit\n`;
             }
