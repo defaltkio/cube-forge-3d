@@ -377,38 +377,55 @@
                 </div>
 
                 <!-- Weight, Purge (ACE 2 Pro Poop) & Print Time -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-zinc-800/80">
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="weightGrams" title="Peso líquido da peça informado pelo fatiador">Peso da Peça (g)</label>
-                        <div class="relative">
-                            <input type="number" id="weightGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-emerald-300 outline-none">
-                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                <div class="pt-4 border-t border-zinc-800/80 space-y-3">
+                    <!-- Batch input mode selector (shown clearly so qty > 1 never confuses unit vs bed) -->
+                    <div id="single-batch-mode-box" class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                        <span class="text-[11px] font-medium text-zinc-300">Peso e tempo acima referem-se a:</span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" id="sbm-unit" onclick="selectSingleBatchMode('unit')" class="selectable-btn is-active px-2.5 py-1 rounded-lg text-[11px]">
+                                1 Peça (× Qtd)
+                            </button>
+                            <button type="button" id="sbm-batch" onclick="selectSingleBatchMode('batch')" class="selectable-btn px-2.5 py-1 rounded-lg text-[11px]">
+                                Lote Inteiro na Mesa (÷ Qtd)
+                            </button>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="purgeGrams" title="Torre de limpeza e purga de troca de cor no ACE 2 Pro">Purga / Suporte (g)</label>
-                        <div class="relative">
-                            <input type="number" id="purgeGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none">
-                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="weightGrams" title="Peso líquido informado pelo fatiador">Peso da Peça (g)</label>
+                            <div class="relative">
+                                <input type="number" id="weightGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-emerald-300 outline-none">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="purgeGrams" title="Torre de limpeza e purga de troca de cor no ACE 2 Pro">Purga / Suporte (g)</label>
+                            <div class="relative">
+                                <input type="number" id="purgeGrams" value="" placeholder="0" min="0" step="0.5" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">g</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printHours">Tempo (Horas)</label>
+                            <div class="relative">
+                                <input type="number" id="printHours" value="" placeholder="0" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">h</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printMinutes">Tempo (Min)</label>
+                            <div class="relative">
+                                <input type="number" id="printMinutes" value="" placeholder="0" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
+                                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printHours">Tempo (Horas)</label>
-                        <div class="relative">
-                            <input type="number" id="printHours" value="" placeholder="0" min="0" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-7 py-2.5 text-sm font-mono font-bold text-white outline-none">
-                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">h</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5" for="printMinutes">Tempo (Min)</label>
-                        <div class="relative">
-                            <input type="number" id="printMinutes" value="" placeholder="0" min="0" max="59" step="1" oninput="calculateAll()" class="w-full bg-elevated border border-zinc-700 focus:border-emerald-500 rounded-xl pl-3 pr-9 py-2.5 text-sm font-mono font-bold text-white outline-none">
-                            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-mono">min</span>
-                        </div>
-                    </div>
+                    <div id="single-batch-calc-hint" class="hidden text-[11px] font-mono text-emerald-300/90 bg-emerald-950/30 border border-emerald-500/20 rounded-lg px-3 py-1.5"></div>
                 </div>
             </section>
 
@@ -470,16 +487,22 @@
                 </div>
 
                 <!-- Multi-parts Totals Quick Strip -->
-                <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div class="flex items-center gap-3">
-                        <span class="font-mono text-purple-300"><strong id="multi-summary-plates-count">0</strong> placas</span>
-                        <span class="text-zinc-600">•</span>
-                        <span class="font-mono text-zinc-300"><strong id="multi-summary-total-weight">0g</strong> filamento</span>
-                        <span class="text-zinc-600">•</span>
-                        <span class="font-mono text-zinc-300"><strong id="multi-summary-total-time">0h</strong> impressão</span>
+                <div class="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/30 space-y-1.5 text-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <span class="font-mono text-purple-300"><strong id="multi-summary-plates-count">0</strong> placas/kit</span>
+                            <span class="text-zinc-600">•</span>
+                            <span class="font-mono text-zinc-300"><strong id="multi-summary-total-weight">0g</strong> / kit</span>
+                            <span class="text-zinc-600">•</span>
+                            <span class="font-mono text-zinc-300"><strong id="multi-summary-total-time">0h 0m</strong> / kit</span>
+                        </div>
+                        <div class="font-mono text-zinc-300">
+                            Custo Fabril (1 Kit): <strong id="multi-summary-direct-cost" class="text-purple-300 font-bold text-sm">R$ 0,00</strong>
+                        </div>
                     </div>
-                    <div class="font-mono text-zinc-300">
-                        Custo Fabril Placas: <strong id="multi-summary-direct-cost" class="text-purple-300 font-bold text-sm">R$ 0,00</strong>
+                    <div id="multi-summary-batch-strip" class="hidden pt-1.5 border-t border-purple-500/20 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-purple-200/90">
+                        <span id="multi-summary-batch-specs">Total 1 kit: 0g • 0h 0m</span>
+                        <span>Custo Fabril Total: <strong id="multi-summary-batch-cost" class="text-purple-300">R$ 0,00</strong></span>
                     </div>
                 </div>
             </section>
@@ -936,27 +959,31 @@
                 <div class="mb-5 pb-4 border-b border-zinc-800/90">
                     <div class="text-xs text-zinc-400 mb-1" id="res-price-label">Valor Unitário ao Cliente</div>
                     <div class="flex items-baseline justify-between gap-2 flex-wrap">
-                        <span id="res-unit-price" class="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">R$ 0,00</span>
+                        <div class="flex items-baseline gap-1.5">
+                            <span id="res-unit-price" class="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">R$ 0,00</span>
+                            <span id="res-unit-suffix" class="hidden text-xs sm:text-sm font-mono font-bold text-emerald-400">/kit</span>
+                        </div>
                         <span id="res-effective-markup" class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">3.0x custo</span>
                     </div>
                     <!-- Batch row displayed conditionally when batchQty > 1 -->
-                    <div id="res-batch-row" class="hidden mt-2 flex items-center justify-between text-xs font-mono text-emerald-300 bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-500/20">
-                        <span>Total do Lote (<span id="res-batch-qty">1</span> un):</span>
-                        <strong id="res-batch-price" class="text-sm">R$ 0,00</strong>
+                    <div id="res-batch-row" class="hidden mt-2.5 flex items-center justify-between text-xs font-mono text-emerald-200 bg-emerald-950/50 px-3 py-2 rounded-lg border border-emerald-500/30">
+                        <span id="res-batch-label">Total do Lote (<span id="res-batch-qty">1</span> un):</span>
+                        <strong id="res-batch-price" class="text-sm sm:text-base font-extrabold text-emerald-300">R$ 0,00</strong>
                     </div>
                 </div>
 
                 <!-- Key Financial Indicators -->
                 <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mb-5">
                     <div class="p-3 sm:p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
-                        <span class="text-[10px] sm:text-[11px] text-zinc-400 block mb-0.5 font-medium">Custo Produção (Un.)</span>
+                        <span id="res-unit-cost-label" class="text-[10px] sm:text-[11px] text-zinc-400 block mb-0.5 font-medium">Custo Produção (Un.)</span>
                         <span id="res-unit-cost" class="text-base sm:text-lg font-mono font-bold text-zinc-100 block">R$ 0,00</span>
                         <span id="res-batch-cost" class="text-[10px] sm:text-[11px] font-mono text-zinc-500 block mt-0.5 truncate">Lote: R$ 0,00</span>
                     </div>
 
                     <div class="p-3 sm:p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
-                        <span class="text-[10px] sm:text-[11px] text-emerald-300 block mb-0.5 font-medium">Lucro Líquido Livre</span>
+                        <span id="res-net-profit-label" class="text-[10px] sm:text-[11px] text-emerald-300 block mb-0.5 font-medium">Lucro Líquido Livre</span>
                         <span id="res-net-profit" class="text-base sm:text-lg font-mono font-extrabold text-emerald-400 block">R$ 0,00</span>
+                        <span id="res-batch-profit" class="hidden text-[10px] sm:text-[11px] font-mono text-emerald-300/90 block mt-0.5 truncate">Total lote: R$ 0,00</span>
                         <div class="text-[10px] sm:text-[11px] font-mono text-emerald-300/80 mt-0.5 flex items-center justify-between gap-1">
                             <span id="res-profit-margin" class="whitespace-nowrap">Margem: 0%</span>
                             <span id="res-profit-per-hour" class="whitespace-nowrap text-right">R$ 0/h</span>
@@ -1071,7 +1098,7 @@
                                 <span>Cartão / Loja</span>
                             </div>
                             <div id="res-guide-card-price" class="text-sm sm:text-base font-mono font-extrabold text-white mt-1">R$ 0,00</div>
-                            <div class="text-[10px] text-zinc-500 mt-0.5">Preço cheio c/ taxas</div>
+                            <div id="res-guide-card-sub" class="text-[10px] text-zinc-500 mt-0.5">Preço cheio c/ taxas</div>
                         </div>
 
                         <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-emerald-500/30">
@@ -1089,13 +1116,13 @@
                                 <span>Mínimo / Desconto</span>
                             </div>
                             <div id="res-guide-min-price" class="text-sm sm:text-base font-mono font-extrabold text-amber-400 mt-1">R$ 0,00</div>
-                            <div class="text-[10px] text-zinc-500 mt-0.5">Piso p/ não ter prejuízo</div>
+                            <div id="res-guide-min-sub" class="text-[10px] text-zinc-500 mt-0.5">Piso p/ não ter prejuízo</div>
                         </div>
 
                         <div class="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800">
                             <div class="flex items-center gap-1 text-[11px] text-zinc-400">
                                 <span class="w-2 h-2 rounded-full bg-purple-400"></span>
-                                <span>Atacado (+10 un)</span>
+                                <span id="res-guide-wholesale-label">Atacado (+10 un)</span>
                             </div>
                             <div id="res-guide-wholesale-price" class="text-sm sm:text-base font-mono font-extrabold text-zinc-200 mt-1">R$ 0,00</div>
                             <div class="text-[10px] text-zinc-500 mt-0.5">Markup 2.0x por volume</div>
@@ -1132,11 +1159,12 @@
             <!-- Price & Profit (clickable to scroll down to receipt) -->
             <button type="button" onclick="scrollToReceipt()" class="text-left flex-1 min-w-0 pr-1 group focus:outline-none">
                 <div class="text-[9px] uppercase font-semibold tracking-wider text-zinc-400 group-hover:text-emerald-400 transition flex items-center gap-1">
-                    <span>Preço Sugerido</span>
+                    <span id="mobile-price-title">Preço Sugerido</span>
                     <i data-lucide="chevron-up" class="w-2.5 h-2.5 text-emerald-400"></i>
                 </div>
-                <div class="flex items-baseline gap-1.5 mt-0.5">
+                <div class="flex items-baseline gap-1.5 mt-0.5 flex-wrap">
                     <span id="mobile-unit-price" class="text-base font-black font-mono text-white tracking-tight leading-none">R$ 0,00</span>
+                    <span id="mobile-batch-total" class="hidden text-[10px] font-mono font-bold text-zinc-300 leading-none whitespace-nowrap">Total: R$ 0,00</span>
                     <span id="mobile-profit-badge" class="text-[10px] font-mono font-bold text-emerald-400 leading-none whitespace-nowrap">+R$ 0,00 líq.</span>
                 </div>
             </button>
@@ -1517,8 +1545,11 @@
             }
         }
 
+        let isRestoringState = false;
+
         const state = {
             activeTab: 'single', // 'single' | 'multi'
+            singleBatchMode: 'unit', // 'unit' (1 peça * qty) | 'batch' (mesa inteira / qty)
             materialId: 'pla',
             machineMode: 'real', // 'real' | 'fixed'
             powerPresetId: 'pwr-220',
@@ -1538,6 +1569,12 @@
         };
 
         let lastCalc = {};
+
+        function selectSingleBatchMode(mode) {
+            state.singleBatchMode = mode === 'batch' ? 'batch' : 'unit';
+            setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], `sbm-${state.singleBatchMode}`);
+            calculateAll();
+        }
 
         // --- TAB SWITCHER (PEÇA ÚNICA VS PROJETO MULTI-PEÇAS) ---
         function switchCalculatorTab(tab) {
@@ -1631,8 +1668,8 @@
 
                         <div>
                             <label class="block text-[10px] text-zinc-400 mb-1">Preço/Kg (R$)</label>
-                            <input type="number" value="${plate.filamentPriceKg || 80}" min="1" step="1"
-                                oninput="updatePlateField('${plate.id}', 'filamentPriceKg', parseFloat(this.value) || 0)"
+                            <input type="number" value="${plate.filamentPriceKg !== undefined ? plate.filamentPriceKg : 80}" min="0" step="1"
+                                oninput="updatePlateField('${plate.id}', 'filamentPriceKg', isNaN(parseFloat(this.value)) ? 0 : Math.max(0, parseFloat(this.value)))"
                                 class="w-full bg-elevated border border-zinc-700 focus:border-purple-400 rounded-lg px-2 py-1.5 text-xs font-mono font-bold text-emerald-400 outline-none">
                         </div>
 
@@ -1744,64 +1781,88 @@
             calculateAll();
         }
 
+        function parseGcodeMetadata(content) {
+            const sample = content.slice(0, 40000) + '\n' + content.slice(-40000);
+            let extractedWeight = null;
+            let extractedSeconds = null;
+
+            const weightRegexes = [
+                /;\s*total\s+filament\s+used\s*\[g\]\s*[:=]\s*([0-9.,\s]+)/i,
+                /;\s*total\s+filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.,\s]+)/i,
+                /;\s*filament\s+used\s*\[g\]\s*[:=]\s*([0-9.,\s]+)/i,
+                /;\s*filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.,\s]+)/i,
+                /;\s*(?:total\s+)?filament\s+used\s*[:=]\s*([0-9.]+)\s*g/i,
+                /;\s*Filament\s+weight\s*[:=]\s*([0-9.]+)\s*g/i
+            ];
+
+            for (const rx of weightRegexes) {
+                const m = sample.match(rx);
+                if (m && m[1]) {
+                    const sum = m[1].split(/[,\s]+/).reduce((acc, part) => {
+                        const n = parseFloat(part.trim());
+                        return acc + (isNaN(n) ? 0 : n);
+                    }, 0);
+                    if (sum > 0) {
+                        extractedWeight = sum;
+                        break;
+                    }
+                }
+            }
+
+            if (extractedWeight === null) {
+                const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.,\s]+)/i) ||
+                                 sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.,\s]+)/i);
+                if (lenMatch && lenMatch[1]) {
+                    const sumLen = lenMatch[1].split(/[,\s]+/).reduce((acc, part) => {
+                        const n = parseFloat(part.trim());
+                        return acc + (isNaN(n) ? 0 : n);
+                    }, 0);
+                    const meters = lenMatch[0].includes('[mm]') ? sumLen / 1000 : sumLen;
+                    if (meters > 0) extractedWeight = meters * 3.0;
+                }
+            }
+
+            const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
+            const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
+
+            if (slicerTime && (slicerTime[1] || slicerTime[2] || slicerTime[3] || slicerTime[4])) {
+                const d = parseInt(slicerTime[1] || 0);
+                const h = parseInt(slicerTime[2] || 0);
+                const m = parseInt(slicerTime[3] || 0);
+                const s = parseInt(slicerTime[4] || 0);
+                extractedSeconds = (d * 86400) + (h * 3600) + (m * 60) + s;
+            } else if (curaTime && curaTime[1]) {
+                extractedSeconds = parseInt(curaTime[1]);
+            }
+
+            const weight = (extractedWeight !== null && !isNaN(extractedWeight)) ? parseFloat(extractedWeight.toFixed(1)) : 0;
+            let hours = 0;
+            let minutes = 0;
+            if (extractedSeconds !== null && extractedSeconds > 0) {
+                const totalMins = Math.max(1, Math.round(extractedSeconds / 60));
+                hours = Math.floor(totalMins / 60);
+                minutes = totalMins % 60;
+            }
+            return { weight, hours, minutes };
+        }
+
         function handlePlateGcodeUpload(event, plateId) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const content = e.target.result;
-                const sample = content.slice(0, 30000) + '\n' + content.slice(-30000);
-
-                let extractedWeight = null;
-                let extractedSeconds = null;
-
-                const weightRegexes = [
-                    /;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[:=]\s*([0-9.]+)/i,
-                    /;\s*(?:total\s+)?filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.]+)/i,
-                    /;\s*(?:total\s+)?filament\s+used\s*[:=]\s*([0-9.]+)\s*g/i,
-                    /;\s*Filament\s+weight\s*[:=]\s*([0-9.]+)\s*g/i
-                ];
-
-                for (const rx of weightRegexes) {
-                    const m = sample.match(rx);
-                    if (m && m[1]) {
-                        extractedWeight = parseFloat(m[1]);
-                        break;
-                    }
-                }
-
-                if (extractedWeight === null) {
-                    const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.]+)/i) ||
-                                     sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.]+)/i);
-                    if (lenMatch && lenMatch[1]) {
-                        const meters = lenMatch[0].includes('[mm]') ? parseFloat(lenMatch[1]) / 1000 : parseFloat(lenMatch[1]);
-                        extractedWeight = meters * 3.0;
-                    }
-                }
-
-                const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
-                const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
-
-                if (slicerTime && (slicerTime[1] || slicerTime[2] || slicerTime[3])) {
-                    const d = parseInt(slicerTime[1] || 0);
-                    const h = parseInt(slicerTime[2] || 0);
-                    const m = parseInt(slicerTime[3] || 0);
-                    extractedSeconds = (d * 86400) + (h * 3600) + (m * 60);
-                } else if (curaTime && curaTime[1]) {
-                    extractedSeconds = parseInt(curaTime[1]);
-                }
-
+                const { weight, hours, minutes } = parseGcodeMetadata(e.target.result);
                 const plate = state.plates.find(p => p.id === plateId);
                 if (plate) {
                     plate.name = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
-                    if (extractedWeight !== null && !isNaN(extractedWeight)) {
-                        plate.weightGrams = parseFloat(extractedWeight.toFixed(1));
+                    if (weight > 0) {
+                        plate.weightGrams = weight;
                         plate.purgeGrams = 0;
                     }
-                    if (extractedSeconds !== null && extractedSeconds > 0) {
-                        plate.hours = Math.floor(extractedSeconds / 3600);
-                        plate.minutes = Math.round((extractedSeconds % 3600) / 60);
+                    if (hours > 0 || minutes > 0) {
+                        plate.hours = hours;
+                        plate.minutes = minutes;
                     }
                     renderPlates();
                     calculateAll();
@@ -1812,11 +1873,11 @@
             event.target.value = '';
         }
 
-        function renderReceiptPlatesList() {
+        function renderReceiptPlatesList(plateBreakdown = []) {
             const container = document.getElementById('multi-plates-receipt-list');
             const badge = document.getElementById('multi-receipt-plates-badge');
             if (!container) return;
-            if (badge) badge.textContent = `${state.plates.length} placas`;
+            if (badge) badge.textContent = `${state.plates.length} ${state.plates.length === 1 ? 'placa' : 'placas'}`;
 
             if (state.plates.length === 0) {
                 container.innerHTML = `<p class="text-[11px] text-zinc-500 italic">Nenhuma placa adicionada ainda.</p>`;
@@ -1824,12 +1885,17 @@
             }
 
             container.innerHTML = state.plates.map((p, idx) => {
+                const totalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
+                const ph = Math.floor(totalMins / 60);
+                const pm = totalMins % 60;
                 const grams = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
-                const time = `${p.hours || 0}h${p.minutes ? p.minutes + 'm' : ''}`;
+                const time = `${ph}h${pm > 0 ? pm + 'm' : ''}`;
+                const info = plateBreakdown[idx];
+                const priceTag = info && info.priceShare > 0 ? ` • <strong class="text-emerald-300">~${formatBRL(info.priceShare)}</strong>` : '';
                 return `
-                    <div class="flex items-center justify-between py-1 border-b border-zinc-800/50 last:border-0">
-                        <span class="text-zinc-300 truncate max-w-[170px]">#${idx + 1} ${escapeHtml(p.name || 'Placa')}</span>
-                        <span class="font-mono text-purple-300 shrink-0">${grams}g • ${time}</span>
+                    <div class="flex items-center justify-between gap-2 py-1 border-b border-zinc-800/50 last:border-0">
+                        <span class="text-zinc-300 truncate max-w-[165px]">#${idx + 1} ${escapeHtml(p.name || 'Placa')}</span>
+                        <span class="font-mono text-purple-300 shrink-0">${grams}g • ${time}${priceTag}</span>
                     </div>
                 `;
             }).join('');
@@ -1860,6 +1926,7 @@
         }
 
         function onManualFilamentPriceInput() {
+            state.materialId = null;
             setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], null);
             document.getElementById('active-material-label').textContent = 'Preço Personalizado';
             calculateAll();
@@ -1890,6 +1957,7 @@
         }
 
         function onManualWattsInput() {
+            state.powerPresetId = null;
             setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], null);
             calculateAll();
         }
@@ -1902,6 +1970,7 @@
         }
 
         function onManualKwhInput() {
+            state.kwhPresetId = null;
             setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], null);
             calculateAll();
         }
@@ -2041,8 +2110,21 @@
         }
 
         function onManualChannelInput() {
+            state.channelId = null;
             setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], null);
             calculateAll();
+        }
+
+        function solveSellingPrice(strategy, unitCost, targetProfitPerUnit, markup, targetMargin, feePct, fixedFee) {
+            if (unitCost <= 0 && fixedFee <= 0) return 0;
+            if (strategy === 'markup') {
+                return ((unitCost * markup) + fixedFee) / Math.max(0.05, 1 - feePct);
+            } else if (strategy === 'hourly') {
+                return ((unitCost + targetProfitPerUnit) + fixedFee) / Math.max(0.05, 1 - feePct);
+            } else {
+                const denom = Math.max(0.05, 1 - targetMargin - feePct);
+                return (unitCost + fixedFee) / denom;
+            }
         }
 
         // --- 7. CORE CALCULATION ENGINE ---
@@ -2053,8 +2135,13 @@
             let machineCostBatch = 0;
             let totalGramsBatch = 0;
             let totalPrintHours = 0;
+            let unitGrams = 0;
+            let unitPrintHours = 0;
             let hours = 0;
             let minutes = 0;
+            let totalHoursDisplay = 0;
+            let totalMinutesDisplay = 0;
+            let plateBreakdown = [];
 
             // Machine Hourly Breakdown (Shared)
             let energyHourly = 0;
@@ -2067,7 +2154,8 @@
                 const kwh = Math.max(0, parseFloat(document.getElementById('kwhPrice').value) || 0);
                 const printerVal = Math.max(0, parseFloat(document.getElementById('printerValue').value) || 0);
                 const lifespan = Math.max(100, parseFloat(document.getElementById('printerLifespan').value) || 5000);
-                maintenanceHourly = Math.max(0, parseFloat(document.getElementById('maintenanceHourly').value) || 0);
+                const rawMaint = parseFloat(document.getElementById('maintenanceHourly').value);
+                maintenanceHourly = isNaN(rawMaint) ? 0 : Math.max(0, rawMaint);
 
                 energyHourly = (watts / 1000) * kwh;
                 depreciationHourly = printerVal / lifespan;
@@ -2098,14 +2186,54 @@
                 qty = Math.max(1, parseInt(document.getElementById('batchQty').value) || 1);
                 const partGrams = Math.max(0, parseFloat(document.getElementById('weightGrams').value) || 0);
                 const purgeGrams = Math.max(0, parseFloat(document.getElementById('purgeGrams').value) || 0);
-                totalGramsBatch = partGrams + purgeGrams;
+                const inputGrams = partGrams + purgeGrams;
 
-                hours = Math.max(0, parseFloat(document.getElementById('printHours').value) || 0);
-                minutes = Math.max(0, parseFloat(document.getElementById('printMinutes').value) || 0);
-                totalPrintHours = hours + (minutes / 60);
+                const inputHours = Math.max(0, parseInt(document.getElementById('printHours').value) || 0);
+                const inputMinutes = Math.max(0, parseInt(document.getElementById('printMinutes').value) || 0);
+                const inputTotalMins = (inputHours * 60) + inputMinutes;
 
-                const filamentPriceKg = Math.max(0, parseFloat(document.getElementById('filamentPriceKg').value) || 0);
-                const failureRate = Math.max(0, parseFloat(document.getElementById('failureRate').value) || 0) / 100;
+                if (state.singleBatchMode === 'unit') {
+                    unitGrams = inputGrams;
+                    totalGramsBatch = inputGrams * qty;
+                    const unitTotalMins = inputTotalMins;
+                    const batchTotalMins = inputTotalMins * qty;
+                    unitPrintHours = unitTotalMins / 60;
+                    totalPrintHours = batchTotalMins / 60;
+                    hours = Math.floor(unitTotalMins / 60);
+                    minutes = unitTotalMins % 60;
+                    totalHoursDisplay = Math.floor(batchTotalMins / 60);
+                    totalMinutesDisplay = batchTotalMins % 60;
+                } else {
+                    totalGramsBatch = inputGrams;
+                    unitGrams = inputGrams / qty;
+                    const batchTotalMins = inputTotalMins;
+                    const unitTotalMins = Math.round(inputTotalMins / qty);
+                    totalPrintHours = batchTotalMins / 60;
+                    unitPrintHours = totalPrintHours / qty;
+                    hours = Math.floor(unitTotalMins / 60);
+                    minutes = unitTotalMins % 60;
+                    totalHoursDisplay = Math.floor(batchTotalMins / 60);
+                    totalMinutesDisplay = batchTotalMins % 60;
+                }
+
+                const singleHintEl = document.getElementById('single-batch-calc-hint');
+                if (singleHintEl) {
+                    if (qty > 1 && (inputGrams > 0 || inputTotalMins > 0)) {
+                        singleHintEl.classList.remove('hidden');
+                        if (state.singleBatchMode === 'unit') {
+                            singleHintEl.textContent = `Multiplicando ${qty} un: ${unitGrams.toFixed(1)}g/un = ${totalGramsBatch.toFixed(1)}g totais • ${totalHoursDisplay}h${totalMinutesDisplay > 0 ? totalMinutesDisplay + 'm' : ''} totais`;
+                        } else {
+                            singleHintEl.textContent = `Dividindo mesa (${qty} un): ${totalGramsBatch.toFixed(1)}g ÷ ${qty} = ${unitGrams.toFixed(1)}g/un • ${hours}h${minutes > 0 ? minutes + 'm' : ''}/un`;
+                        }
+                    } else {
+                        singleHintEl.classList.add('hidden');
+                    }
+                }
+
+                const rawFilPrice = parseFloat(document.getElementById('filamentPriceKg').value);
+                const filamentPriceKg = isNaN(rawFilPrice) ? 80 : Math.max(0, rawFilPrice);
+                const rawFail = parseFloat(document.getElementById('failureRate').value);
+                const failureRate = (isNaN(rawFail) ? 0 : Math.max(0, rawFail)) / 100;
 
                 const rawFilamentCostBatch = (totalGramsBatch / 1000) * filamentPriceKg;
                 const rawMachineCostBatch = totalPrintHours * totalMachineHourly;
@@ -2114,33 +2242,40 @@
                 machineCostBatch = rawMachineCostBatch * (1 + failureRate);
 
                 document.getElementById('batch-badge').textContent = `Lote: ${qty} un`;
-                document.getElementById('res-price-label').textContent = 'Valor Unitário ao Cliente';
+                document.getElementById('res-price-label').textContent = qty > 1 ? 'Valor Unitário por Peça (Cliente)' : 'Valor Unitário ao Cliente';
                 document.getElementById('res-composition-label').textContent = 'Raio-X de Cada Peça Vendida';
-                document.getElementById('lbl-total-weight-time').textContent = `${totalGramsBatch}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
+                document.getElementById('lbl-total-weight-time').textContent = qty > 1
+                    ? `${unitGrams.toFixed(0)}g/un • ${hours}h${minutes > 0 ? minutes + 'm' : ''}/un (Total: ${totalGramsBatch.toFixed(0)}g)`
+                    : `${totalGramsBatch.toFixed(0)}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''}`;
             } else {
                 // Multi-parts mode
                 pieceName = (document.getElementById('multiProjectName') && document.getElementById('multiProjectName').value.trim()) || 'Projeto Multi-Peças 3D';
                 qty = Math.max(1, parseInt(document.getElementById('multiBatchQty').value) || 1);
-                const multiFailureRate = Math.max(0, parseFloat(document.getElementById('multiFailureRate').value) || 0) / 100;
+                const rawMultiFail = parseFloat(document.getElementById('multiFailureRate').value);
+                const multiFailureRate = (isNaN(rawMultiFail) ? 0 : Math.max(0, rawMultiFail)) / 100;
 
                 let kitGrams = 0;
-                let kitHours = 0;
+                let kitTotalMinutes = 0;
                 let kitFilamentCost = 0;
                 let kitMachineCost = 0;
 
                 state.plates.forEach(p => {
                     const pGrams = Math.max(0, (parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0));
-                    const pHours = Math.max(0, (parseInt(p.hours) || 0) + ((parseInt(p.minutes) || 0) / 60));
-                    const pPriceKg = Math.max(0, parseFloat(p.filamentPriceKg) || 80);
+                    const pTotalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
+                    const pHours = pTotalMins / 60;
+                    const parsedKg = parseFloat(p.filamentPriceKg);
+                    const pPriceKg = isNaN(parsedKg) ? 80 : Math.max(0, parsedKg);
 
                     const pFilament = ((pGrams / 1000) * pPriceKg) * (1 + multiFailureRate);
                     const pMachine = (pHours * totalMachineHourly) * (1 + multiFailureRate);
                     const pSubtotal = pFilament + pMachine;
 
                     kitGrams += pGrams;
-                    kitHours += pHours;
+                    kitTotalMinutes += pTotalMins;
                     kitFilamentCost += pFilament;
                     kitMachineCost += pMachine;
+
+                    plateBreakdown.push({ cost: pSubtotal, priceShare: 0 });
 
                     const badgeEl = document.getElementById(`plate-subtotal-${p.id}`);
                     if (badgeEl) {
@@ -2148,12 +2283,19 @@
                     }
                 });
 
+                const kitHours = kitTotalMinutes / 60;
+                unitGrams = kitGrams;
+                unitPrintHours = kitHours;
                 filamentCostBatch = kitFilamentCost * qty;
                 machineCostBatch = kitMachineCost * qty;
                 totalGramsBatch = kitGrams * qty;
                 totalPrintHours = kitHours * qty;
-                hours = Math.floor(kitHours);
-                minutes = Math.round((kitHours % 1) * 60);
+                hours = Math.floor(kitTotalMinutes / 60);
+                minutes = kitTotalMinutes % 60;
+
+                const batchTotalMinutes = kitTotalMinutes * qty;
+                totalHoursDisplay = Math.floor(batchTotalMinutes / 60);
+                totalMinutesDisplay = batchTotalMinutes % 60;
 
                 // Update multi summary inside card 1B
                 const countBadge = document.getElementById('multi-plates-count-badge');
@@ -2167,16 +2309,29 @@
                 const sumDirectCost = document.getElementById('multi-summary-direct-cost');
                 if (sumDirectCost) sumDirectCost.textContent = formatBRL(kitFilamentCost + kitMachineCost);
 
-                // Update receipt elements for multi mode
-                document.getElementById('batch-badge').textContent = `Projeto: ${state.plates.length} placas (${qty} ${qty > 1 ? 'kits' : 'kit'})`;
-                document.getElementById('res-price-label').textContent = qty > 1 ? 'Valor por Kit Completo' : 'Valor Total do Projeto';
-                document.getElementById('res-composition-label').textContent = 'Raio-X do Projeto Completo';
-                document.getElementById('lbl-total-weight-time').textContent = `${kitGrams.toFixed(0)}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''} (${state.plates.length} pl)`;
+                const multiBatchStrip = document.getElementById('multi-summary-batch-strip');
+                if (multiBatchStrip) {
+                    if (qty > 1) {
+                        multiBatchStrip.classList.remove('hidden');
+                        const specsEl = document.getElementById('multi-summary-batch-specs');
+                        const costEl = document.getElementById('multi-summary-batch-cost');
+                        if (specsEl) specsEl.textContent = `Total ${qty} kits: ${totalGramsBatch.toFixed(1)}g • ${totalHoursDisplay}h ${totalMinutesDisplay}m`;
+                        if (costEl) costEl.textContent = formatBRL((kitFilamentCost + kitMachineCost) * qty);
+                    } else {
+                        multiBatchStrip.classList.add('hidden');
+                    }
+                }
 
-                renderReceiptPlatesList();
+                // Update receipt elements for multi mode
+                document.getElementById('batch-badge').textContent = `Projeto: ${state.plates.length} ${state.plates.length === 1 ? 'placa' : 'placas'} (${qty} ${qty > 1 ? 'kits' : 'kit'})`;
+                document.getElementById('res-price-label').textContent = qty > 1 ? 'Valor Unitário por Kit (Cliente)' : 'Valor Total do Projeto (1 Kit)';
+                document.getElementById('res-composition-label').textContent = qty > 1 ? 'Raio-X por Kit Completo' : 'Raio-X do Projeto Completo';
+                document.getElementById('lbl-total-weight-time').textContent = qty > 1
+                    ? `${kitGrams.toFixed(0)}g/kit • ${hours}h${minutes > 0 ? minutes + 'm' : ''}/kit (Total: ${totalGramsBatch.toFixed(0)}g • ${totalHoursDisplay}h${totalMinutesDisplay > 0 ? totalMinutesDisplay + 'm' : ''})`
+                    : `${kitGrams.toFixed(0)}g • ${hours}h${minutes > 0 ? minutes + 'm' : ''} (${state.plates.length} pl)`;
             }
 
-            // Packaging, Finishing & Manual Labor (per unit)
+            // Packaging, Finishing & Manual Labor (per unit / per kit)
             let addonsPerUnit = 0;
             state.quickAddons.forEach(a => {
                 if (a.active) addonsPerUnit += Math.max(0, a.cost);
@@ -2196,118 +2351,206 @@
             const unitCost = totalBatchCost / qty;
 
             // Marketplace & Tax Fees
-            const mktPct = Math.max(0, parseFloat(document.getElementById('marketplaceFeePct').value) || 0) / 100;
-            const taxPct = Math.max(0, parseFloat(document.getElementById('taxFeePct').value) || 0) / 100;
+            const rawMktPct = parseFloat(document.getElementById('marketplaceFeePct').value);
+            const mktPct = (isNaN(rawMktPct) ? 0 : Math.max(0, rawMktPct)) / 100;
+            const rawTaxPct = parseFloat(document.getElementById('taxFeePct').value);
+            const taxPct = (isNaN(rawTaxPct) ? 0 : Math.max(0, rawTaxPct)) / 100;
             const totalFeePct = Math.min(0.90, mktPct + taxPct);
-            const fixedFeePerUnit = Math.max(0, parseFloat(document.getElementById('marketplaceFixedFee').value) || 0);
+            const rawFixedFee = parseFloat(document.getElementById('marketplaceFixedFee').value);
+            const fixedFeePerUnit = isNaN(rawFixedFee) ? 0 : Math.max(0, rawFixedFee);
 
             // Target Selling Price per Unit (Reverse Fee Protection)
-            let unitSellingPrice = 0;
-            if (state.pricingStrategy === 'markup') {
-                const markup = parseFloat(document.getElementById('markupSlider').value) || 3.0;
-                const desiredNetRevenue = unitCost * markup;
-                unitSellingPrice = (desiredNetRevenue + fixedFeePerUnit) / (1 - totalFeePct);
-            } else if (state.pricingStrategy === 'hourly') {
-                const targetHourlyProfit = Math.max(0, parseFloat(document.getElementById('targetHourlyProfit').value) || 20);
-                const targetProfitPerUnit = (totalPrintHours * targetHourlyProfit) / qty;
-                const desiredNetRevenue = unitCost + targetProfitPerUnit;
-                unitSellingPrice = (desiredNetRevenue + fixedFeePerUnit) / (1 - totalFeePct);
-            } else {
-                const targetMargin = Math.min(0.85, (parseFloat(document.getElementById('targetMarginPct').value) || 50) / 100);
-                const denom = Math.max(0.05, 1 - targetMargin - totalFeePct);
-                unitSellingPrice = (unitCost + fixedFeePerUnit) / denom;
-            }
+            const currentMarkup = parseFloat(document.getElementById('markupSlider').value) || 3.0;
+            const rawHourlyProfit = parseFloat(document.getElementById('targetHourlyProfit').value);
+            const targetHourlyProfit = isNaN(rawHourlyProfit) ? 20 : Math.max(0, rawHourlyProfit);
+            const targetProfitPerUnit = (totalPrintHours * targetHourlyProfit) / qty;
+            const rawMarginPct = parseFloat(document.getElementById('targetMarginPct').value);
+            const targetMargin = Math.min(0.85, Math.max(0, (isNaN(rawMarginPct) ? 50 : rawMarginPct) / 100));
 
+            const unitSellingPrice = solveSellingPrice(
+                state.pricingStrategy, unitCost, targetProfitPerUnit, currentMarkup, targetMargin, totalFeePct, fixedFeePerUnit
+            );
             const batchSellingPrice = unitSellingPrice * qty;
+
+            // Update multi-plates price share inside receipt
+            if (state.activeTab === 'multi') {
+                const kitDirectCost = (filamentCostBatch + machineCostBatch) / qty;
+                if (kitDirectCost > 0 && unitSellingPrice > 0) {
+                    plateBreakdown.forEach(item => {
+                        item.priceShare = (item.cost / kitDirectCost) * unitSellingPrice;
+                    });
+                }
+                renderReceiptPlatesList(plateBreakdown);
+            }
 
             // Breakdown per unit
             const unitFilament = filamentCostBatch / qty;
             const unitMachine = machineCostBatch / qty;
             const unitExtras = totalExtrasBatch / qty;
-            const unitFees = (unitSellingPrice * totalFeePct) + fixedFeePerUnit;
+            const unitFees = unitSellingPrice > 0 ? ((unitSellingPrice * totalFeePct) + fixedFeePerUnit) : 0;
             const unitNetProfit = unitSellingPrice - unitCost - unitFees;
+            const batchNetProfit = unitNetProfit * qty;
             const netMarginPct = unitSellingPrice > 0 ? (unitNetProfit / unitSellingPrice) * 100 : 0;
-            const currentMarkup = parseFloat(document.getElementById('markupSlider').value) || 3.0;
             const effectiveMarkup = unitCost > 0 ? (unitSellingPrice / unitCost) : currentMarkup;
             const profitPerPrintHour = totalPrintHours > 0 ? (unitNetProfit * qty) / totalPrintHours : unitNetProfit;
 
-            // Practical Pricing Guidance Options (Cartão vs PIX separados e precisos)
+            // Practical Pricing Guidance Options (Cartão vs PIX separados e exatos)
             const standardCardRate = 0.0499; // Taxa padrão de maquininha/link 1x no Brasil (4,99%)
             const effectiveCardRate = mktPct > 0 ? mktPct : standardCardRate;
-            const currentDesiredRevenue = state.pricingStrategy === 'markup' ? (unitCost * currentMarkup) : (state.pricingStrategy === 'hourly' ? (unitCost + ((totalPrintHours * (parseFloat(document.getElementById('targetHourlyProfit')?.value) || 20)) / qty)) : (unitCost / Math.max(0.05, 1 - (parseFloat(document.getElementById('targetMarginPct')?.value) || 50) / 100)));
 
             let guideCardPrice = 0;
             let guidePixPrice = 0;
 
-            if (unitCost > 0) {
+            if (unitCost > 0 || fixedFeePerUnit > 0) {
                 if (mktPct === 0) {
-                    // Usuário selecionou PIX na tela: preço base é o valor limpo no PIX
-                    guidePixPrice = currentDesiredRevenue / Math.max(0.1, 1 - taxPct);
-                    // Preço no cartão embute a taxa de maquininha para repassar ao cliente
-                    guideCardPrice = (guidePixPrice + fixedFeePerUnit) / Math.max(0.1, 1 - effectiveCardRate);
+                    // Canal PIX selecionado na tela: unitSellingPrice já é o preço limpo no PIX
+                    guidePixPrice = unitSellingPrice;
+                    const cardTotalFeePct = Math.min(0.90, effectiveCardRate + taxPct);
+                    guideCardPrice = solveSellingPrice(
+                        state.pricingStrategy, unitCost, targetProfitPerUnit, currentMarkup, targetMargin, cardTotalFeePct, fixedFeePerUnit
+                    );
                 } else {
-                    // Usuário selecionou Cartão ou Marketplace na tela: unitSellingPrice já é o preço no cartão
+                    // Canal Cartão ou Marketplace selecionado: unitSellingPrice é o preço com taxa
                     guideCardPrice = unitSellingPrice;
-                    // Preço no PIX é o valor direto sem a comissão de pagamento/marketplace
-                    guidePixPrice = currentDesiredRevenue / Math.max(0.1, 1 - taxPct);
-                    // Garante que o PIX tenha sempre vantagem real de desconto sobre o cartão
-                    if (guidePixPrice >= guideCardPrice) {
+                    // PIX sem comissão do canal/maquininha e sem taxa fixa de marketplace, mantendo apenas imposto NF
+                    guidePixPrice = solveSellingPrice(
+                        state.pricingStrategy, unitCost, targetProfitPerUnit, currentMarkup, targetMargin, taxPct, 0
+                    );
+                    if (guidePixPrice >= guideCardPrice && guideCardPrice > 0) {
                         guidePixPrice = guideCardPrice * (1 - effectiveCardRate);
                     }
                 }
             }
 
-            const guideMinPrice = ((unitCost * 2.2) + fixedFeePerUnit) / Math.max(0.1, 1 - totalFeePct);
-            const guideWholesalePrice = ((unitCost * 2.0) + fixedFeePerUnit) / Math.max(0.1, 1 - totalFeePct);
+            const breakEvenPrice = unitCost > 0 ? (unitCost + fixedFeePerUnit) / Math.max(0.05, 1 - totalFeePct) : 0;
+            const floor22x = unitCost > 0 ? ((unitCost * 2.2) + fixedFeePerUnit) / Math.max(0.05, 1 - totalFeePct) : 0;
+            const guideMinPrice = unitSellingPrice > 0 ? Math.max(breakEvenPrice, Math.min(unitSellingPrice * 0.92, floor22x)) : 0;
+            const guideWholesalePrice = unitCost > 0 ? ((unitCost * 2.0) + fixedFeePerUnit) / Math.max(0.05, 1 - totalFeePct) : 0;
             const unitWholesalePrice = guideWholesalePrice;
 
+            // Keep displayed batch totals strictly equal to (displayed unit price * qty)
+            const r2 = (n) => Math.round((n || 0) * 100) / 100;
+            const displayUnitSellingPrice = r2(unitSellingPrice);
+            const displayBatchSellingPrice = qty > 1 ? r2(displayUnitSellingPrice * qty) : unitSellingPrice;
+            const displayGuideCard = r2(guideCardPrice);
+            const displayGuidePix = r2(guidePixPrice);
+            const displayGuideMin = r2(guideMinPrice);
+
             lastCalc = {
-                pieceName, qty, totalGramsBatch, hours, minutes, totalPrintHours,
-                unitCost, totalBatchCost, unitSellingPrice, batchSellingPrice,
-                unitNetProfit, netMarginPct, effectiveMarkup, profitPerPrintHour,
-                unitWholesalePrice, totalMachineHourly, guideCardPrice, guidePixPrice, guideMinPrice
+                pieceName, qty, totalGramsBatch, unitGrams, hours, minutes, totalHoursDisplay, totalMinutesDisplay, totalPrintHours, unitPrintHours,
+                unitCost, totalBatchCost, unitSellingPrice: displayUnitSellingPrice, batchSellingPrice: displayBatchSellingPrice,
+                unitNetProfit, batchNetProfit, netMarginPct, effectiveMarkup, profitPerPrintHour,
+                unitWholesalePrice, totalMachineHourly, guideCardPrice: displayGuideCard, guidePixPrice: displayGuidePix, guideMinPrice: displayGuideMin
             };
 
-            // Update DOM
-            document.getElementById('res-unit-price').textContent = formatBRL(unitSellingPrice);
-            document.getElementById('mobile-unit-price').textContent = formatBRL(unitSellingPrice);
-            document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x ${unitCost > 0 ? 'custo' : 'markup'}`;
+            const isMulti = state.activeTab === 'multi';
+            const unitWord = isMulti ? 'kit' : 'un';
+            const pluralWord = isMulti ? 'kits' : 'un';
 
-            document.getElementById('res-batch-qty').textContent = qty;
-            document.getElementById('res-batch-price').textContent = formatBRL(batchSellingPrice);
+            // Update DOM Hero
+            document.getElementById('res-unit-price').textContent = formatBRL(displayUnitSellingPrice);
+            const suffixEl = document.getElementById('res-unit-suffix');
+            if (suffixEl) {
+                if (qty > 1) {
+                    suffixEl.textContent = `/${unitWord}`;
+                    suffixEl.classList.remove('hidden');
+                } else {
+                    suffixEl.classList.add('hidden');
+                }
+            }
+            document.getElementById('res-effective-markup').textContent = `${effectiveMarkup.toFixed(1)}x ${unitCost > 0 ? 'custo' : 'markup'}`;
 
             // Conditionally show batch row when qty > 1
             const batchRow = document.getElementById('res-batch-row');
+            const batchLabelEl = document.getElementById('res-batch-label');
+            if (batchLabelEl) {
+                batchLabelEl.innerHTML = isMulti
+                    ? `Total do Pedido (<span id="res-batch-qty">${qty}</span> kits):`
+                    : `Total do Lote (<span id="res-batch-qty">${qty}</span> un):`;
+            } else {
+                const batchQtyEl = document.getElementById('res-batch-qty');
+                if (batchQtyEl) batchQtyEl.textContent = qty;
+            }
+            document.getElementById('res-batch-price').textContent = formatBRL(displayBatchSellingPrice);
             if (qty > 1) {
                 batchRow.classList.remove('hidden');
             } else {
                 batchRow.classList.add('hidden');
             }
 
-            document.getElementById('res-unit-cost').textContent = formatBRL(unitCost);
-            document.getElementById('res-batch-cost').textContent = `Lote: ${formatBRL(totalBatchCost)}`;
+            // Mobile Sticky Bottom Bar
+            const mobileTitle = document.getElementById('mobile-price-title');
+            if (mobileTitle) mobileTitle.textContent = qty > 1 ? `Por ${unitWord} (${qty} ${pluralWord})` : 'Preço Sugerido';
+            document.getElementById('mobile-unit-price').textContent = qty > 1 ? `${formatBRL(displayUnitSellingPrice)}/${unitWord}` : formatBRL(displayUnitSellingPrice);
+            const mobileBatchTotal = document.getElementById('mobile-batch-total');
+            if (mobileBatchTotal) {
+                if (qty > 1) {
+                    mobileBatchTotal.textContent = `• Total: ${formatBRL(displayBatchSellingPrice)}`;
+                    mobileBatchTotal.classList.remove('hidden');
+                } else {
+                    mobileBatchTotal.classList.add('hidden');
+                }
+            }
+            document.getElementById('mobile-profit-badge').textContent = qty > 1
+                ? `+${formatBRL(batchNetProfit)} líq.`
+                : `+${formatBRL(unitNetProfit)} líq.`;
 
+            // Key indicators
+            const unitCostLabel = document.getElementById('res-unit-cost-label');
+            if (unitCostLabel) unitCostLabel.textContent = isMulti ? 'Custo Produção (Kit)' : 'Custo Produção (Un.)';
+            document.getElementById('res-unit-cost').textContent = formatBRL(unitCost);
+            document.getElementById('res-batch-cost').textContent = qty > 1
+                ? `Total (${qty} ${pluralWord}): ${formatBRL(totalBatchCost)}`
+                : `Lote: ${formatBRL(totalBatchCost)}`;
+
+            const netProfitLabel = document.getElementById('res-net-profit-label');
+            if (netProfitLabel) netProfitLabel.textContent = isMulti && qty > 1 ? 'Lucro Líquido (por Kit)' : 'Lucro Líquido Livre';
             document.getElementById('res-net-profit').textContent = formatBRL(unitNetProfit);
+            const batchProfitEl = document.getElementById('res-batch-profit');
+            if (batchProfitEl) {
+                if (qty > 1) {
+                    batchProfitEl.textContent = `Total (${qty} ${pluralWord}): ${formatBRL(batchNetProfit)}`;
+                    batchProfitEl.classList.remove('hidden');
+                } else {
+                    batchProfitEl.classList.add('hidden');
+                }
+            }
             document.getElementById('res-profit-margin').textContent = `Margem: ${netMarginPct.toFixed(0)}%`;
             document.getElementById('res-profit-per-hour').textContent = `${formatBRL(profitPerPrintHour)}/h`;
-            document.getElementById('mobile-profit-badge').textContent = `+${formatBRL(unitNetProfit)} líq.`;
 
             const elOldWs = document.getElementById('res-wholesale-price'); if (elOldWs) elOldWs.textContent = formatBRL(unitWholesalePrice);
 
             // Update Negotiation & Pricing Guide Card elements
             const elGuideCard = document.getElementById('res-guide-card-price');
-            if (elGuideCard) elGuideCard.textContent = formatBRL(guideCardPrice);
-            const elGuidePix = document.getElementById('res-guide-pix-price');
-            if (elGuidePix) elGuidePix.textContent = formatBRL(guidePixPrice);
-            const elGuideMin = document.getElementById('res-guide-min-price');
-            if (elGuideMin) elGuideMin.textContent = formatBRL(guideMinPrice);
-            const elGuideWholesale = document.getElementById('res-guide-wholesale-price');
-            if (elGuideWholesale) elGuideWholesale.textContent = formatBRL(guideWholesalePrice);
+            if (elGuideCard) elGuideCard.textContent = qty > 1 ? `${formatBRL(displayGuideCard)}/${unitWord}` : formatBRL(displayGuideCard);
+            const elGuideCardSub = document.getElementById('res-guide-card-sub');
+            if (elGuideCardSub) {
+                elGuideCardSub.textContent = qty > 1 ? `Total (${qty} ${pluralWord}): ${formatBRL(displayGuideCard * qty)}` : 'Preço cheio c/ taxas';
+            }
 
-            const pixSavings = Math.max(0, guideCardPrice - guidePixPrice);
+            const elGuidePix = document.getElementById('res-guide-pix-price');
+            if (elGuidePix) elGuidePix.textContent = qty > 1 ? `${formatBRL(displayGuidePix)}/${unitWord}` : formatBRL(displayGuidePix);
+
+            const elGuideMin = document.getElementById('res-guide-min-price');
+            if (elGuideMin) elGuideMin.textContent = qty > 1 ? `${formatBRL(displayGuideMin)}/${unitWord}` : formatBRL(displayGuideMin);
+            const elGuideMinSub = document.getElementById('res-guide-min-sub');
+            if (elGuideMinSub) {
+                elGuideMinSub.textContent = qty > 1 ? `Total (${qty} ${pluralWord}): ${formatBRL(displayGuideMin * qty)}` : 'Piso p/ não ter prejuízo';
+            }
+
+            const elWholesaleLabel = document.getElementById('res-guide-wholesale-label');
+            if (elWholesaleLabel) elWholesaleLabel.textContent = isMulti ? 'Atacado (+10 kits)' : 'Atacado (+10 un)';
+            const elGuideWholesale = document.getElementById('res-guide-wholesale-price');
+            if (elGuideWholesale) elGuideWholesale.textContent = `${formatBRL(guideWholesalePrice)}/${unitWord}`;
+
+            const pixSavings = Math.max(0, r2(displayGuideCard - displayGuidePix));
             const elPixSub = document.getElementById('res-guide-pix-sub');
             if (elPixSub) {
-                if (unitCost > 0 && pixSavings > 0.05) {
+                if (qty > 1 && unitCost > 0) {
+                    const batchPixTotal = r2(displayGuidePix * qty);
+                    const batchPixSavings = r2(pixSavings * qty);
+                    elPixSub.textContent = `Total: ${formatBRL(batchPixTotal)}${batchPixSavings > 0.05 ? ' (econ. ' + formatBRL(batchPixSavings) + ')' : ''}`;
+                } else if (unitCost > 0 && pixSavings > 0.05) {
                     elPixSub.textContent = `Economia de ${formatBRL(pixSavings)}`;
                 } else {
                     elPixSub.textContent = 'Desconto sem taxa';
@@ -2317,8 +2560,14 @@
             const elPracticalTip = document.getElementById('res-practical-tip');
             if (elPracticalTip) {
                 if (unitCost > 0) {
-                    const savingsStr = pixSavings > 0.05 ? ` (economia de ${formatBRL(pixSavings)})` : '';
-                    elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(guideCardPrice)}</strong> no cartão ou <strong class="text-emerald-300 font-bold">${formatBRL(guidePixPrice)}</strong> no PIX${savingsStr}, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
+                    if (qty > 1) {
+                        const batchCardTotal = r2(displayGuideCard * qty);
+                        const batchPixTotal = r2(displayGuidePix * qty);
+                        elPracticalTip.innerHTML = `Para <strong class="text-white">${qty} ${pluralWord}</strong>: cobre <strong class="text-white">${formatBRL(displayGuideCard)}/${unitWord}</strong> (Total ${formatBRL(batchCardTotal)}) no cartão ou <strong class="text-emerald-300 font-bold">${formatBRL(displayGuidePix)}/${unitWord}</strong> (Total ${formatBRL(batchPixTotal)}) no PIX e embolse <strong class="text-emerald-400 font-bold">${formatBRL(batchNetProfit)} limpos</strong>!`;
+                    } else {
+                        const savingsStr = pixSavings > 0.05 ? ` (economia de ${formatBRL(pixSavings)})` : '';
+                        elPracticalTip.innerHTML = `Cobrando <strong class="text-white">${formatBRL(displayGuideCard)}</strong> no cartão ou <strong class="text-emerald-300 font-bold">${formatBRL(displayGuidePix)}</strong> no PIX${savingsStr}, você cobre os <strong class="text-zinc-300">${formatBRL(unitCost)}</strong> de custos e embolsa <strong class="text-emerald-400 font-bold">${formatBRL(unitNetProfit)} limpos</strong>!`;
+                    }
                 } else {
                     elPracticalTip.innerHTML = '💡 Preencha o <strong class="text-white">peso (g)</strong> e <strong class="text-white">tempo</strong> da peça para ver o preço recomendado e seu lucro em tempo real.';
                 }
@@ -2348,56 +2597,8 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const content = e.target.result;
-                const sample = content.slice(0, 30000) + '\n' + content.slice(-30000);
-
-                let extractedWeight = null;
-                let extractedSeconds = null;
-
-                const weightRegexes = [
-                    /;\s*(?:total\s+)?filament\s+used\s*\[g\]\s*[:=]\s*([0-9.]+)/i,
-                    /;\s*(?:total\s+)?filament\s+weight\s*(?:\[g\])?\s*[:=]\s*([0-9.]+)/i,
-                    /;\s*(?:total\s+)?filament\s+used\s*[:=]\s*([0-9.]+)\s*g/i,
-                    /;\s*Filament\s+weight\s*[:=]\s*([0-9.]+)\s*g/i
-                ];
-
-                for (const rx of weightRegexes) {
-                    const m = sample.match(rx);
-                    if (m && m[1]) {
-                        extractedWeight = parseFloat(m[1]);
-                        break;
-                    }
-                }
-
-                if (extractedWeight === null) {
-                    const lenMatch = sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[m\]\s*[:=]\s*([0-9.]+)/i) ||
-                                     sample.match(/;\s*(?:total\s+)?filament\s+used\s*\[mm\]\s*[:=]\s*([0-9.]+)/i);
-                    if (lenMatch && lenMatch[1]) {
-                        const meters = lenMatch[0].includes('[mm]') ? parseFloat(lenMatch[1]) / 1000 : parseFloat(lenMatch[1]);
-                        extractedWeight = meters * 3.0;
-                    }
-                }
-
-                const curaTime = sample.match(/;\s*TIME\s*:\s*(\d+)/i) || sample.match(/;\s*TIME_ELAPSED\s*:\s*(\d+)/i);
-                const slicerTime = sample.match(/;\s*(?:estimated\s+printing\s+time|model\s+printing\s+time|total\s+estimated\s+time).*?[:=]\s*(?:(\d+)\s*d\s*)?(?:(\d+)\s*h\s*)?(?:(\d+)\s*m\s*)?(?:(\d+)\s*s)?/i);
-
-                if (slicerTime && (slicerTime[1] || slicerTime[2] || slicerTime[3])) {
-                    const d = parseInt(slicerTime[1] || 0);
-                    const h = parseInt(slicerTime[2] || 0);
-                    const m = parseInt(slicerTime[3] || 0);
-                    extractedSeconds = (d * 86400) + (h * 3600) + (m * 60);
-                } else if (curaTime && curaTime[1]) {
-                    extractedSeconds = parseInt(curaTime[1]);
-                }
-
+                const { weight, hours, minutes } = parseGcodeMetadata(e.target.result);
                 const parsedName = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]+/g, " ");
-                const weight = (extractedWeight !== null && !isNaN(extractedWeight)) ? parseFloat(extractedWeight.toFixed(1)) : 0;
-                let hours = 0;
-                let minutes = 0;
-                if (extractedSeconds !== null && extractedSeconds > 0) {
-                    hours = Math.floor(extractedSeconds / 3600);
-                    minutes = Math.round((extractedSeconds % 3600) / 60);
-                }
 
                 if (state.activeTab === 'single') {
                     document.getElementById('pieceName').value = parsedName;
@@ -2468,7 +2669,8 @@
             const r = lastCalc;
             if (!r) return;
             const isSingle = state.activeTab === 'single';
-            const timeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
+            const unitTimeStr = `${r.hours}h${r.minutes > 0 ? ' ' + r.minutes + 'min' : ''}`;
+            const totalTimeStr = `${r.totalHoursDisplay ?? r.hours}h${(r.totalMinutesDisplay ?? r.minutes) > 0 ? ' ' + (r.totalMinutesDisplay ?? r.minutes) + 'min' : ''}`;
             let msg = `🧊 *ORÇAMENTO IMPRESSÃO 3D — CUBE FORGE*\n`;
 
             // Always use separated Cartão and PIX prices
@@ -2481,15 +2683,23 @@
                 msg += `━━━━━━━━━━━━━━━━━━━━\n`;
                 msg += `📦 *Item:* ${r.pieceName || 'Peça Impressa 3D'}\n`;
                 msg += `🔢 *Quantidade:* ${r.qty} ${r.qty > 1 ? 'unidades' : 'unidade'}\n`;
-                msg += `⚖️ *Peso Estimado:* ${r.totalGramsBatch}g | ⏱️ *Tempo:* ${timeStr}\n\n`;
-
                 if (r.qty > 1) {
+                    const unitW = Number(r.unitGrams || (r.totalGramsBatch / r.qty)).toFixed(0);
+                    const totalW = Number(r.totalGramsBatch || 0).toFixed(0);
+                    msg += `⚖️ *Peso Estimado:* ${unitW}g/un (Total: ${totalW}g)\n`;
+                    msg += `⏱️ *Tempo:* ${unitTimeStr}/un (Total: ${totalTimeStr})\n\n`;
+
                     const batchCard = cardPrice * r.qty;
                     const batchPix = pixPrice * r.qty;
                     const batchSavings = Math.max(0, batchCard - batchPix);
-                    msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(cardPrice)}* /un (Total: ${formatBRL(batchCard)})\n`;
-                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}* /un (Total: *${formatBRL(batchPix)}* — economia de ${formatBRL(batchSavings)}!)\n`;
+                    msg += `💳 *Cartão / Parcelado:*\n`;
+                    msg += `   • Unitário: *${formatBRL(cardPrice)}*/un\n`;
+                    msg += `   • Total (${r.qty} un): *${formatBRL(batchCard)}*\n\n`;
+                    msg += `⚡ *PIX com Desconto:*\n`;
+                    msg += `   • Unitário: *${formatBRL(pixPrice)}*/un\n`;
+                    msg += `   • Total (${r.qty} un): *${formatBRL(batchPix)}*${batchSavings > 0.05 ? ' (economia de ' + formatBRL(batchSavings) + '!)' : ''}\n`;
                 } else {
+                    msg += `⚖️ *Peso Estimado:* ${Number(r.totalGramsBatch || 0).toFixed(0)}g | ⏱️ *Tempo:* ${unitTimeStr}\n\n`;
                     msg += `💳 *Valor no Cartão / Parcelado:* *${formatBRL(cardPrice)}*\n`;
                     msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}*${savings > 0.05 ? ' (economia de ' + savingsFormatted + '!)' : ''}\n`;
                 }
@@ -2499,12 +2709,21 @@
                 msg += `━━━━━━━━━━━━━━━━━━━━\n`;
                 msg += `📦 *Projeto:* ${r.pieceName || 'Projeto Multi-Peças 3D'}\n`;
                 msg += `🔢 *Quantidade de Kits:* ${r.qty} ${r.qty > 1 ? 'kits' : 'kit'}\n`;
-                msg += `🧩 *Total de Placas por Kit:* ${state.plates.length} placas\n`;
-                const kitWeight = (r.totalGramsBatch / r.qty).toFixed(0);
-                msg += `⚖️ *Peso do Kit:* ${kitWeight}g | ⏱️ *Tempo de Produção:* ${timeStr}\n\n`;
-                msg += `📋 *Detalhamento das Placas:*\n`;
+                msg += `🧩 *Total de Placas por Kit:* ${state.plates.length} ${state.plates.length === 1 ? 'placa' : 'placas'}\n`;
+                const kitWeight = Number(r.unitGrams || (r.totalGramsBatch / r.qty)).toFixed(0);
+                const totalWeight = Number(r.totalGramsBatch || 0).toFixed(0);
+                if (r.qty > 1) {
+                    msg += `⚖️ *Peso:* ${kitWeight}g/kit (Total ${r.qty} kits: ${totalWeight}g)\n`;
+                    msg += `⏱️ *Tempo de Produção:* ${unitTimeStr}/kit (Total: ${totalTimeStr})\n\n`;
+                } else {
+                    msg += `⚖️ *Peso do Kit:* ${kitWeight}g | ⏱️ *Tempo de Produção:* ${unitTimeStr}\n\n`;
+                }
+                msg += `📋 *Detalhamento das Placas${r.qty > 1 ? ' (por kit)' : ''}:*\n`;
                 state.plates.forEach((p, idx) => {
-                    const pTime = `${p.hours || 0}h${p.minutes ? ' ' + p.minutes + 'm' : ''}`;
+                    const pTotalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
+                    const ph = Math.floor(pTotalMins / 60);
+                    const pm = pTotalMins % 60;
+                    const pTime = `${ph}h${pm > 0 ? ' ' + pm + 'm' : ''}`;
                     const pWeight = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
                     msg += `  ${idx + 1}. *${p.name || 'Placa #' + (idx + 1)}*: ${pWeight}g • ${pTime}\n`;
                 });
@@ -2513,8 +2732,12 @@
                     const batchCard = cardPrice * r.qty;
                     const batchPix = pixPrice * r.qty;
                     const batchSavings = Math.max(0, batchCard - batchPix);
-                    msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(cardPrice)}* (Total: ${formatBRL(batchCard)})\n`;
-                    msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}* (Total: *${formatBRL(batchPix)}* — economia de ${formatBRL(batchSavings)}!)\n`;
+                    msg += `\n💳 *Cartão / Parcelado:*\n`;
+                    msg += `   • Unitário (por kit): *${formatBRL(cardPrice)}*/kit\n`;
+                    msg += `   • Total (${r.qty} kits): *${formatBRL(batchCard)}*\n\n`;
+                    msg += `⚡ *PIX com Desconto:*\n`;
+                    msg += `   • Unitário (por kit): *${formatBRL(pixPrice)}*/kit\n`;
+                    msg += `   • Total (${r.qty} kits): *${formatBRL(batchPix)}*${batchSavings > 0.05 ? ' (economia total de ' + formatBRL(batchSavings) + '!)' : ''}\n`;
                 } else {
                     msg += `\n💳 *Valor por Kit no Cartão:* *${formatBRL(cardPrice)}*\n`;
                     msg += `⚡ *Valor com Desconto no PIX:* *${formatBRL(pixPrice)}*${savings > 0.05 ? ' (economia de ' + savingsFormatted + '!)' : ''}\n`;
@@ -2566,9 +2789,11 @@
         const AUTOSAVE_KEY = 'cube_forge_autosave_v3';
 
         function autoSaveState() {
+            if (isRestoringState) return;
             try {
                 const data = {
                     activeTab: state.activeTab,
+                    singleBatchMode: state.singleBatchMode,
                     // Single part
                     pieceName: document.getElementById('pieceName')?.value || '',
                     batchQty: document.getElementById('batchQty')?.value || '1',
@@ -2620,6 +2845,7 @@
         }
 
         function loadAutoSavedState() {
+            isRestoringState = true;
             try {
                 const raw = localStorage.getItem(AUTOSAVE_KEY);
                 if (!raw) {
@@ -2633,10 +2859,14 @@
                 const data = JSON.parse(raw);
                 if (!data) return false;
 
-                // Restore activeTab
+                // Restore activeTab & batch mode
                 if (data.activeTab) {
                     state.activeTab = data.activeTab;
                 }
+                if (data.singleBatchMode) {
+                    state.singleBatchMode = data.singleBatchMode === 'batch' ? 'batch' : 'unit';
+                }
+                setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], `sbm-${state.singleBatchMode}`);
 
                 // Single part
                 if (data.pieceName !== undefined && document.getElementById('pieceName')) document.getElementById('pieceName').value = data.pieceName;
@@ -2650,6 +2880,11 @@
                 if (data.materialId) {
                     state.materialId = data.materialId;
                     setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], `mat-${data.materialId}`);
+                } else if (data.materialId === null) {
+                    state.materialId = null;
+                    setActiveButtonInGroup(['mat-pla', 'mat-petg', 'mat-silk', 'mat-abs'], null);
+                    const lbl = document.getElementById('active-material-label');
+                    if (lbl) lbl.textContent = 'Preço Personalizado';
                 }
 
                 // Multi parts
@@ -2666,20 +2901,22 @@
 
                 // Machine
                 if (data.machineMode) selectMachineMode(data.machineMode);
-                if (data.powerPresetId && data.printerWatts) {
-                    state.powerPresetId = data.powerPresetId;
+                if (data.printerWatts !== undefined && document.getElementById('printerWatts')) {
                     document.getElementById('printerWatts').value = data.printerWatts;
-                    setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], data.powerPresetId);
                 }
-                if (data.kwhPresetId && data.kwhPrice) {
-                    state.kwhPresetId = data.kwhPresetId;
+                state.powerPresetId = data.powerPresetId !== undefined ? data.powerPresetId : state.powerPresetId;
+                setActiveButtonInGroup(['pwr-140', 'pwr-220', 'pwr-250'], state.powerPresetId);
+
+                if (data.kwhPrice !== undefined && document.getElementById('kwhPrice')) {
                     document.getElementById('kwhPrice').value = data.kwhPrice;
-                    setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], data.kwhPresetId);
                 }
-                if (data.printerValue) document.getElementById('printerValue').value = data.printerValue;
-                if (data.printerLifespan) document.getElementById('printerLifespan').value = data.printerLifespan;
-                if (data.maintenanceHourly) document.getElementById('maintenanceHourly').value = data.maintenanceHourly;
-                if (data.fixedHourlyCost) document.getElementById('fixedHourlyCost').value = data.fixedHourlyCost;
+                state.kwhPresetId = data.kwhPresetId !== undefined ? data.kwhPresetId : state.kwhPresetId;
+                setActiveButtonInGroup(['kwh-edp-real', 'kwh-edp-base'], state.kwhPresetId);
+
+                if (data.printerValue !== undefined) document.getElementById('printerValue').value = data.printerValue;
+                if (data.printerLifespan !== undefined) document.getElementById('printerLifespan').value = data.printerLifespan;
+                if (data.maintenanceHourly !== undefined) document.getElementById('maintenanceHourly').value = data.maintenanceHourly;
+                if (data.fixedHourlyCost !== undefined) document.getElementById('fixedHourlyCost').value = data.fixedHourlyCost;
 
                 // Extras
                 if (Array.isArray(data.quickAddons)) state.quickAddons = data.quickAddons;
@@ -2689,21 +2926,23 @@
 
                 // Strategy & Channels
                 if (data.pricingStrategy) selectPricingStrategy(data.pricingStrategy);
-                if (data.markupVal) selectMarkupPill(parseFloat(data.markupVal));
-                if (data.targetHourlyProfit && document.getElementById('targetHourlyProfit')) document.getElementById('targetHourlyProfit').value = data.targetHourlyProfit;
-                if (data.targetMarginPct && document.getElementById('targetMarginPct')) document.getElementById('targetMarginPct').value = data.targetMarginPct;
-                if (data.channelId) {
-                    state.channelId = data.channelId;
-                    setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], `chan-${data.channelId}`);
-                }
-                if (data.marketplaceFeePct && document.getElementById('marketplaceFeePct')) document.getElementById('marketplaceFeePct').value = data.marketplaceFeePct;
-                if (data.marketplaceFixedFee && document.getElementById('marketplaceFixedFee')) document.getElementById('marketplaceFixedFee').value = data.marketplaceFixedFee;
-                if (data.taxFeePct && document.getElementById('taxFeePct')) document.getElementById('taxFeePct').value = data.taxFeePct;
+                if (data.markupVal !== undefined) selectMarkupPill(parseFloat(data.markupVal));
+                if (data.targetHourlyProfit !== undefined && document.getElementById('targetHourlyProfit')) document.getElementById('targetHourlyProfit').value = data.targetHourlyProfit;
+                if (data.targetMarginPct !== undefined && document.getElementById('targetMarginPct')) document.getElementById('targetMarginPct').value = data.targetMarginPct;
+
+                state.channelId = data.channelId !== undefined ? data.channelId : state.channelId;
+                setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], state.channelId ? `chan-${state.channelId}` : null);
+
+                if (data.marketplaceFeePct !== undefined && document.getElementById('marketplaceFeePct')) document.getElementById('marketplaceFeePct').value = data.marketplaceFeePct;
+                if (data.marketplaceFixedFee !== undefined && document.getElementById('marketplaceFixedFee')) document.getElementById('marketplaceFixedFee').value = data.marketplaceFixedFee;
+                if (data.taxFeePct !== undefined && document.getElementById('taxFeePct')) document.getElementById('taxFeePct').value = data.taxFeePct;
 
                 return true;
             } catch (e) {
                 console.warn('Error loading autosaved state:', e);
                 return false;
+            } finally {
+                isRestoringState = false;
             }
         }
 
@@ -2727,6 +2966,7 @@
             } catch (e) {}
 
             state.activeTab = 'single';
+            state.singleBatchMode = 'unit';
             state.materialId = 'pla';
             state.machineMode = 'real';
             state.powerPresetId = 'pwr-220';
@@ -2744,6 +2984,8 @@
                 { id: 'plate_1', name: 'Placa #1', materialKey: 'pla', filamentPriceKg: 80, weightGrams: 0, purgeGrams: 0, hours: 0, minutes: 0 }
             ];
 
+            setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], 'sbm-unit');
+
             // Reset single fields
             document.getElementById('pieceName').value = '';
             document.getElementById('batchQty').value = '1';
@@ -2751,7 +2993,7 @@
             document.getElementById('purgeGrams').value = '';
             document.getElementById('printHours').value = '';
             document.getElementById('printMinutes').value = '';
-            document.getElementById('filamentPriceKg').value = '80.00';
+            selectMaterialPreset('pla', 80, 'PLA Padrão');
             document.getElementById('failureRate').value = '10';
 
             // Reset multi fields
@@ -2800,9 +3042,16 @@
 
         function saveCurrentPreset() {
             const list = getSavedPresets();
+            const isMulti = state.activeTab === 'multi';
+            const displayName = isMulti
+                ? (document.getElementById('multiProjectName')?.value.trim() || 'Projeto Multi-Peças')
+                : (document.getElementById('pieceName')?.value.trim() || 'Peça Sem Nome');
+
             const item = {
                 id: Date.now(),
-                pieceName: document.getElementById('pieceName').value || 'Peça Sem Nome',
+                activeTab: state.activeTab,
+                singleBatchMode: state.singleBatchMode,
+                pieceName: displayName,
                 batchQty: document.getElementById('batchQty').value,
                 weightGrams: document.getElementById('weightGrams').value,
                 purgeGrams: document.getElementById('purgeGrams').value,
@@ -2810,13 +3059,32 @@
                 printMinutes: document.getElementById('printMinutes').value,
                 filamentPriceKg: document.getElementById('filamentPriceKg').value,
                 failureRate: document.getElementById('failureRate').value,
+
+                // Multi parts support
+                multiProjectName: document.getElementById('multiProjectName')?.value || '',
+                multiBatchQty: document.getElementById('multiBatchQty')?.value || '1',
+                multiFailureRate: document.getElementById('multiFailureRate')?.value || '10',
+                plates: JSON.parse(JSON.stringify(state.plates)),
+
+                // Extras & labor
+                laborMinutes: document.getElementById('laborMinutes')?.value || '',
+                laborHourlyRate: document.getElementById('laborHourlyRate')?.value || '25.00',
+                quickAddons: JSON.parse(JSON.stringify(state.quickAddons)),
+                customExtras: JSON.parse(JSON.stringify(state.customExtras)),
+
+                // Strategy & Channel
                 pricingStrategy: state.pricingStrategy,
                 markupVal: document.getElementById('markupSlider').value,
                 targetHourlyProfit: document.getElementById('targetHourlyProfit').value,
                 targetMarginPct: document.getElementById('targetMarginPct').value,
                 channelId: state.channelId,
-                quickAddons: state.quickAddons,
-                customExtras: state.customExtras,
+                marketplaceFeePct: document.getElementById('marketplaceFeePct').value,
+                marketplaceFixedFee: document.getElementById('marketplaceFixedFee').value,
+                taxFeePct: document.getElementById('taxFeePct').value,
+
+                summaryGrams: Number(lastCalc.unitGrams || lastCalc.totalGramsBatch || 0).toFixed(0),
+                summaryTime: `${lastCalc.hours || 0}h${lastCalc.minutes || 0}m`,
+                summaryQty: lastCalc.qty || 1,
                 unitPriceFormatted: formatBRL(lastCalc.unitSellingPrice),
                 dateStr: new Date().toLocaleDateString('pt-BR')
             };
@@ -2830,24 +3098,58 @@
         function loadPreset(id) {
             const p = getSavedPresets().find(x => x.id === id);
             if (!p) return;
-            document.getElementById('pieceName').value = p.pieceName || '';
-            document.getElementById('batchQty').value = p.batchQty || 1;
-            document.getElementById('weightGrams').value = p.weightGrams || 0;
-            document.getElementById('purgeGrams').value = p.purgeGrams || 0;
-            document.getElementById('printHours').value = p.printHours || 0;
-            document.getElementById('printMinutes').value = p.printMinutes || 0;
-            document.getElementById('filamentPriceKg').value = p.filamentPriceKg || 80;
-            if (p.failureRate !== undefined) document.getElementById('failureRate').value = p.failureRate;
 
-            if (p.pricingStrategy) selectPricingStrategy(p.pricingStrategy);
-            if (p.markupVal) selectMarkupPill(parseFloat(p.markupVal));
-            if (p.targetHourlyProfit) document.getElementById('targetHourlyProfit').value = p.targetHourlyProfit;
-            if (p.targetMarginPct) document.getElementById('targetMarginPct').value = p.targetMarginPct;
+            isRestoringState = true;
+            try {
+                if (p.singleBatchMode) {
+                    selectSingleBatchMode(p.singleBatchMode);
+                }
+                document.getElementById('pieceName').value = p.activeTab === 'multi' ? '' : (p.pieceName || '');
+                document.getElementById('batchQty').value = p.batchQty || 1;
+                document.getElementById('weightGrams').value = p.weightGrams || '';
+                document.getElementById('purgeGrams').value = p.purgeGrams || '';
+                document.getElementById('printHours').value = p.printHours || '';
+                document.getElementById('printMinutes').value = p.printMinutes || '';
+                document.getElementById('filamentPriceKg').value = p.filamentPriceKg || 80;
+                if (p.failureRate !== undefined) document.getElementById('failureRate').value = p.failureRate;
 
-            if (p.quickAddons) state.quickAddons = p.quickAddons;
-            if (p.customExtras) state.customExtras = p.customExtras;
+                if (p.multiProjectName !== undefined && document.getElementById('multiProjectName')) {
+                    document.getElementById('multiProjectName').value = p.multiProjectName || p.pieceName || '';
+                }
+                if (p.multiBatchQty !== undefined && document.getElementById('multiBatchQty')) {
+                    document.getElementById('multiBatchQty').value = p.multiBatchQty;
+                }
+                if (p.multiFailureRate !== undefined && document.getElementById('multiFailureRate')) {
+                    document.getElementById('multiFailureRate').value = p.multiFailureRate;
+                }
+                if (Array.isArray(p.plates) && p.plates.length > 0) {
+                    state.plates = JSON.parse(JSON.stringify(p.plates));
+                }
 
-            switchCalculatorTab('single');
+                if (p.laborMinutes !== undefined && document.getElementById('laborMinutes')) document.getElementById('laborMinutes').value = p.laborMinutes;
+                if (p.laborHourlyRate !== undefined && document.getElementById('laborHourlyRate')) document.getElementById('laborHourlyRate').value = p.laborHourlyRate;
+                if (p.quickAddons) state.quickAddons = JSON.parse(JSON.stringify(p.quickAddons));
+                if (p.customExtras) state.customExtras = JSON.parse(JSON.stringify(p.customExtras));
+
+                if (p.pricingStrategy) selectPricingStrategy(p.pricingStrategy);
+                if (p.markupVal !== undefined) selectMarkupPill(parseFloat(p.markupVal));
+                if (p.targetHourlyProfit !== undefined) document.getElementById('targetHourlyProfit').value = p.targetHourlyProfit;
+                if (p.targetMarginPct !== undefined) document.getElementById('targetMarginPct').value = p.targetMarginPct;
+
+                if (p.channelId !== undefined) {
+                    state.channelId = p.channelId;
+                    setActiveButtonInGroup(['chan-pix', 'chan-card', 'chan-shopee', 'chan-ml'], p.channelId ? `chan-${p.channelId}` : null);
+                }
+                if (p.marketplaceFeePct !== undefined) document.getElementById('marketplaceFeePct').value = p.marketplaceFeePct;
+                if (p.marketplaceFixedFee !== undefined) document.getElementById('marketplaceFixedFee').value = p.marketplaceFixedFee;
+                if (p.taxFeePct !== undefined) document.getElementById('taxFeePct').value = p.taxFeePct;
+
+                switchCalculatorTab(p.activeTab === 'multi' ? 'multi' : 'single');
+            } finally {
+                isRestoringState = false;
+            }
+
+            renderPlates();
             renderQuickAddons();
             renderCustomExtras();
             calculateAll();
@@ -2870,11 +3172,16 @@
                 container.innerHTML = `<p class="text-xs text-zinc-500 text-center py-8">Nenhum orçamento salvo ainda.</p>`;
                 return;
             }
-            container.innerHTML = list.map(p => `
+            container.innerHTML = list.map(p => {
+                const isMulti = p.activeTab === 'multi';
+                const tag = isMulti ? `<span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[9px] font-mono mr-1">MULTI</span>` : '';
+                const grams = p.summaryGrams ?? p.weightGrams ?? 0;
+                const time = p.summaryTime ?? `${p.printHours || 0}h${p.printMinutes || 0}m`;
+                return `
                 <div class="flex items-center justify-between gap-2 p-3 rounded-xl bg-zinc-900 border border-zinc-800">
                     <div class="min-w-0 flex-1 cursor-pointer" onclick="loadPreset(${p.id})">
-                        <div class="text-xs font-bold text-white truncate">${escapeHtml(p.pieceName)}</div>
-                        <div class="text-[11px] font-mono text-zinc-400">${p.weightGrams}g • ${p.printHours}h${p.printMinutes}m • <strong class="text-emerald-400">${p.unitPriceFormatted}</strong></div>
+                        <div class="text-xs font-bold text-white truncate">${tag}${escapeHtml(p.pieceName)}</div>
+                        <div class="text-[11px] font-mono text-zinc-400">${grams}g • ${time} • <strong class="text-emerald-400">${p.unitPriceFormatted}</strong></div>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <button type="button" onclick="loadPreset(${p.id})" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold">Abrir</button>
@@ -2883,7 +3190,8 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
             safeCreateIcons();
         }
 
