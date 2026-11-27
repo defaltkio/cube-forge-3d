@@ -471,6 +471,20 @@
                     </div>
                 </div>
 
+                <!-- Multi-parts batch input mode selector -->
+                <div id="multi-batch-mode-box" class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
+                    <span class="text-[11px] font-medium text-zinc-300">Peso e tempo nas placas referem-se a:</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" id="mbm-unit" onclick="selectMultiBatchMode('unit')" class="selectable-btn is-active px-2.5 py-1 rounded-lg text-[11px]">
+                            1 Kit (× Qtd)
+                        </button>
+                        <button type="button" id="mbm-batch" onclick="selectMultiBatchMode('batch')" class="selectable-btn px-2.5 py-1 rounded-lg text-[11px]">
+                            Lote Inteiro nas Placas (÷ Qtd)
+                        </button>
+                    </div>
+                </div>
+                <div id="multi-batch-calc-hint" class="hidden text-[11px] font-mono text-purple-300/90 bg-purple-950/30 border border-purple-500/20 rounded-lg px-3 py-1.5"></div>
+
                 <!-- Plates Container -->
                 <div class="space-y-3.5">
                     <div class="flex items-center justify-between">
@@ -1550,6 +1564,7 @@
         const state = {
             activeTab: 'single', // 'single' | 'multi'
             singleBatchMode: 'unit', // 'unit' (1 peça * qty) | 'batch' (mesa inteira / qty)
+            multiBatchMode: 'unit', // 'unit' (1 kit * qty) | 'batch' (lote inteiro nas placas / qty)
             materialId: 'pla',
             machineMode: 'real', // 'real' | 'fixed'
             powerPresetId: 'pwr-220',
@@ -1573,6 +1588,12 @@
         function selectSingleBatchMode(mode) {
             state.singleBatchMode = mode === 'batch' ? 'batch' : 'unit';
             setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], `sbm-${state.singleBatchMode}`);
+            calculateAll();
+        }
+
+        function selectMultiBatchMode(mode) {
+            state.multiBatchMode = mode === 'batch' ? 'batch' : 'unit';
+            setActiveButtonInGroup(['mbm-unit', 'mbm-batch'], `mbm-${state.multiBatchMode}`);
             calculateAll();
         }
 
@@ -1873,7 +1894,7 @@
             event.target.value = '';
         }
 
-        function renderReceiptPlatesList(plateBreakdown = []) {
+        function renderReceiptPlatesList(plateBreakdown = [], qty = 1) {
             const container = document.getElementById('multi-plates-receipt-list');
             const badge = document.getElementById('multi-receipt-plates-badge');
             if (!container) return;
@@ -1884,11 +1905,15 @@
                 return;
             }
 
+            const divisor = (state.multiBatchMode === 'batch' && qty > 1) ? qty : 1;
+
             container.innerHTML = state.plates.map((p, idx) => {
-                const totalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
-                const ph = Math.floor(totalMins / 60);
-                const pm = totalMins % 60;
-                const grams = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
+                const rawTotalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
+                const perKitMins = Math.round(rawTotalMins / divisor);
+                const ph = Math.floor(perKitMins / 60);
+                const pm = perKitMins % 60;
+                const rawGrams = (parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0);
+                const grams = (rawGrams / divisor).toFixed(0);
                 const time = `${ph}h${pm > 0 ? pm + 'm' : ''}`;
                 const info = plateBreakdown[idx];
                 const priceTag = info && info.priceShare > 0 ? ` • <strong class="text-emerald-300">~${formatBRL(info.priceShare)}</strong>` : '';
@@ -2254,10 +2279,10 @@
                 const rawMultiFail = parseFloat(document.getElementById('multiFailureRate').value);
                 const multiFailureRate = (isNaN(rawMultiFail) ? 0 : Math.max(0, rawMultiFail)) / 100;
 
-                let kitGrams = 0;
-                let kitTotalMinutes = 0;
-                let kitFilamentCost = 0;
-                let kitMachineCost = 0;
+                let platesGrams = 0;
+                let platesTotalMinutes = 0;
+                let platesFilamentCost = 0;
+                let platesMachineCost = 0;
 
                 state.plates.forEach(p => {
                     const pGrams = Math.max(0, (parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0));
@@ -2270,32 +2295,72 @@
                     const pMachine = (pHours * totalMachineHourly) * (1 + multiFailureRate);
                     const pSubtotal = pFilament + pMachine;
 
-                    kitGrams += pGrams;
-                    kitTotalMinutes += pTotalMins;
-                    kitFilamentCost += pFilament;
-                    kitMachineCost += pMachine;
+                    platesGrams += pGrams;
+                    platesTotalMinutes += pTotalMins;
+                    platesFilamentCost += pFilament;
+                    platesMachineCost += pMachine;
 
-                    plateBreakdown.push({ cost: pSubtotal, priceShare: 0 });
+                    const perKitPlateCost = (state.multiBatchMode === 'batch' && qty > 1) ? (pSubtotal / qty) : pSubtotal;
+                    plateBreakdown.push({ cost: perKitPlateCost, priceShare: 0 });
 
                     const badgeEl = document.getElementById(`plate-subtotal-${p.id}`);
                     if (badgeEl) {
-                        badgeEl.textContent = formatBRL(pSubtotal);
+                        badgeEl.textContent = (state.multiBatchMode === 'batch' && qty > 1)
+                            ? `${formatBRL(pSubtotal)} (${formatBRL(perKitPlateCost)}/kit)`
+                            : formatBRL(pSubtotal);
                     }
                 });
+
+                let kitGrams = 0;
+                let kitTotalMinutes = 0;
+                let batchTotalMinutes = 0;
+                let kitFilamentCost = 0;
+                let kitMachineCost = 0;
+
+                if (state.multiBatchMode === 'unit') {
+                    kitGrams = platesGrams;
+                    kitTotalMinutes = platesTotalMinutes;
+                    kitFilamentCost = platesFilamentCost;
+                    kitMachineCost = platesMachineCost;
+
+                    filamentCostBatch = kitFilamentCost * qty;
+                    machineCostBatch = kitMachineCost * qty;
+                    totalGramsBatch = kitGrams * qty;
+                    batchTotalMinutes = kitTotalMinutes * qty;
+                } else {
+                    totalGramsBatch = platesGrams;
+                    batchTotalMinutes = platesTotalMinutes;
+                    filamentCostBatch = platesFilamentCost;
+                    machineCostBatch = platesMachineCost;
+
+                    kitGrams = platesGrams / qty;
+                    kitTotalMinutes = Math.round(platesTotalMinutes / qty);
+                    kitFilamentCost = platesFilamentCost / qty;
+                    kitMachineCost = platesMachineCost / qty;
+                }
 
                 const kitHours = kitTotalMinutes / 60;
                 unitGrams = kitGrams;
                 unitPrintHours = kitHours;
-                filamentCostBatch = kitFilamentCost * qty;
-                machineCostBatch = kitMachineCost * qty;
-                totalGramsBatch = kitGrams * qty;
-                totalPrintHours = kitHours * qty;
+                totalPrintHours = batchTotalMinutes / 60;
                 hours = Math.floor(kitTotalMinutes / 60);
                 minutes = kitTotalMinutes % 60;
-
-                const batchTotalMinutes = kitTotalMinutes * qty;
                 totalHoursDisplay = Math.floor(batchTotalMinutes / 60);
                 totalMinutesDisplay = batchTotalMinutes % 60;
+
+                const multiHintEl = document.getElementById('multi-batch-calc-hint');
+                if (multiHintEl) {
+                    if (qty > 1 && (platesGrams > 0 || platesTotalMinutes > 0)) {
+                        multiHintEl.classList.remove('hidden');
+                        if (state.multiBatchMode === 'unit') {
+                            multiHintEl.textContent = `Multiplicando ${qty} kits: ${kitGrams.toFixed(1)}g/kit = ${totalGramsBatch.toFixed(1)}g totais • ${totalHoursDisplay}h${totalMinutesDisplay > 0 ? totalMinutesDisplay + 'm' : ''} totais`;
+                        } else {
+                            multiHintEl.textContent = `Dividindo lote nas placas (${qty} kits): ${totalGramsBatch.toFixed(1)}g ÷ ${qty} = ${kitGrams.toFixed(1)}g/kit • ${hours}h${minutes > 0 ? minutes + 'm' : ''}/kit`;
+                        }
+                    } else {
+                        multiHintEl.classList.add('hidden');
+                    }
+                }
 
                 // Update multi summary inside card 1B
                 const countBadge = document.getElementById('multi-plates-count-badge');
@@ -2316,7 +2381,7 @@
                         const specsEl = document.getElementById('multi-summary-batch-specs');
                         const costEl = document.getElementById('multi-summary-batch-cost');
                         if (specsEl) specsEl.textContent = `Total ${qty} kits: ${totalGramsBatch.toFixed(1)}g • ${totalHoursDisplay}h ${totalMinutesDisplay}m`;
-                        if (costEl) costEl.textContent = formatBRL((kitFilamentCost + kitMachineCost) * qty);
+                        if (costEl) costEl.textContent = formatBRL(filamentCostBatch + machineCostBatch);
                     } else {
                         multiBatchStrip.classList.add('hidden');
                     }
@@ -2380,7 +2445,7 @@
                         item.priceShare = (item.cost / kitDirectCost) * unitSellingPrice;
                     });
                 }
-                renderReceiptPlatesList(plateBreakdown);
+                renderReceiptPlatesList(plateBreakdown, qty);
             }
 
             // Breakdown per unit
@@ -2719,12 +2784,15 @@
                     msg += `⚖️ *Peso do Kit:* ${kitWeight}g | ⏱️ *Tempo de Produção:* ${unitTimeStr}\n\n`;
                 }
                 msg += `📋 *Detalhamento das Placas${r.qty > 1 ? ' (por kit)' : ''}:*\n`;
+                const plateDivisor = (state.multiBatchMode === 'batch' && r.qty > 1) ? r.qty : 1;
                 state.plates.forEach((p, idx) => {
                     const pTotalMins = Math.max(0, ((parseInt(p.hours) || 0) * 60) + (parseInt(p.minutes) || 0));
-                    const ph = Math.floor(pTotalMins / 60);
-                    const pm = pTotalMins % 60;
+                    const perKitMins = Math.round(pTotalMins / plateDivisor);
+                    const ph = Math.floor(perKitMins / 60);
+                    const pm = perKitMins % 60;
                     const pTime = `${ph}h${pm > 0 ? ' ' + pm + 'm' : ''}`;
-                    const pWeight = ((parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0)).toFixed(0);
+                    const rawPWeight = (parseFloat(p.weightGrams) || 0) + (parseFloat(p.purgeGrams) || 0);
+                    const pWeight = (rawPWeight / plateDivisor).toFixed(0);
                     msg += `  ${idx + 1}. *${p.name || 'Placa #' + (idx + 1)}*: ${pWeight}g • ${pTime}\n`;
                 });
 
@@ -2794,6 +2862,7 @@
                 const data = {
                     activeTab: state.activeTab,
                     singleBatchMode: state.singleBatchMode,
+                    multiBatchMode: state.multiBatchMode,
                     // Single part
                     pieceName: document.getElementById('pieceName')?.value || '',
                     batchQty: document.getElementById('batchQty')?.value || '1',
@@ -2859,7 +2928,7 @@
                 const data = JSON.parse(raw);
                 if (!data) return false;
 
-                // Restore activeTab & batch mode
+                // Restore activeTab & batch modes
                 if (data.activeTab) {
                     state.activeTab = data.activeTab;
                 }
@@ -2867,6 +2936,10 @@
                     state.singleBatchMode = data.singleBatchMode === 'batch' ? 'batch' : 'unit';
                 }
                 setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], `sbm-${state.singleBatchMode}`);
+                if (data.multiBatchMode) {
+                    state.multiBatchMode = data.multiBatchMode === 'batch' ? 'batch' : 'unit';
+                }
+                setActiveButtonInGroup(['mbm-unit', 'mbm-batch'], `mbm-${state.multiBatchMode}`);
 
                 // Single part
                 if (data.pieceName !== undefined && document.getElementById('pieceName')) document.getElementById('pieceName').value = data.pieceName;
@@ -2967,6 +3040,7 @@
 
             state.activeTab = 'single';
             state.singleBatchMode = 'unit';
+            state.multiBatchMode = 'unit';
             state.materialId = 'pla';
             state.machineMode = 'real';
             state.powerPresetId = 'pwr-220';
@@ -2985,6 +3059,7 @@
             ];
 
             setActiveButtonInGroup(['sbm-unit', 'sbm-batch'], 'sbm-unit');
+            setActiveButtonInGroup(['mbm-unit', 'mbm-batch'], 'mbm-unit');
 
             // Reset single fields
             document.getElementById('pieceName').value = '';
@@ -3051,6 +3126,7 @@
                 id: Date.now(),
                 activeTab: state.activeTab,
                 singleBatchMode: state.singleBatchMode,
+                multiBatchMode: state.multiBatchMode,
                 pieceName: displayName,
                 batchQty: document.getElementById('batchQty').value,
                 weightGrams: document.getElementById('weightGrams').value,
@@ -3103,6 +3179,9 @@
             try {
                 if (p.singleBatchMode) {
                     selectSingleBatchMode(p.singleBatchMode);
+                }
+                if (p.multiBatchMode) {
+                    selectMultiBatchMode(p.multiBatchMode);
                 }
                 document.getElementById('pieceName').value = p.activeTab === 'multi' ? '' : (p.pieceName || '');
                 document.getElementById('batchQty').value = p.batchQty || 1;
